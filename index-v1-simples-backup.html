@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desafio Reta Final — Protocolo 21 Dias</title>
+<meta name="description" content="Descubra em poucos minutos o plano certo pra sua reta final do ENEM ou vestibular — sem decorar tudo de novo, sem crise de ansiedade na hora da prova.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Paleta oficial da marca (identidade-marca/BRAND.md, seção 3-4).
+     Azul = foco/confiança (headers, navegação). Laranja = urgência real
+     (datas da prova, alertas de tempo). Verde = RESERVADO só pros 3
+     grandes CTAs de conversão (começar quiz, liberar resultado, botão
+     final de compra) — nunca em navegação neutra entre perguntas. */
+  :root{
+    --offwhite:#FAFAF8;
+    --offwhite-deep:#F0F0EC;
+    --card:#FFFFFF;
+    --line:#E4E3DD;
+    --blue:#2E5EFF;
+    --blue-deep:#1E44D6;
+    --orange:#FF6B35;
+    --orange-deep:#E8551F;
+    --green:#1FAE6B;
+    --green-deep:#178A56;
+    --dark:#14151A;
+    --ink:#1E2029;
+    --ink-soft:#5B5F70;
+    --red:#E5484D;
+    --radius:16px;
+    --shadow:0 8px 30px rgba(20,21,26,0.08);
+    --shadow-lg:0 20px 60px rgba(20,21,26,0.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--offwhite);
+    color:var(--ink);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    font-synthesis:none;
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',system-ui,sans-serif; text-wrap:balance;}
+  .app{max-width:520px;margin:0 auto;min-height:100vh;background:var(--offwhite);box-shadow:var(--shadow-lg);position:relative;overflow:hidden;}
+  .progress-wrap{position:sticky;top:0;z-index:20;background:var(--offwhite);padding:14px 20px 10px;border-bottom:1px solid var(--line);}
+  .progress-bar{height:6px;background:var(--offwhite-deep);border-radius:99px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--blue);border-radius:99px;transition:width .4s ease;}
+  .progress-label{font-size:12px;color:var(--ink-soft);margin-top:6px;letter-spacing:.03em;text-transform:uppercase;font-variant-numeric:tabular-nums;}
+  .step{display:none;padding:28px 20px 100px;animation:fadeIn .35s ease;}
+  .step.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  @media (prefers-reduced-motion:reduce){.step{animation:none;}}
+
+  /* HOOK SCREEN */
+  .hero-img{width:100%;aspect-ratio:3/2;object-fit:cover;border-radius:var(--radius);box-shadow:var(--shadow);}
+  .eyebrow{color:var(--blue);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;margin:20px 0 8px;}
+  h1.hook{font-size:27px;line-height:1.28;font-weight:700;margin-bottom:10px;}
+  .sub{color:var(--ink-soft);font-size:15px;line-height:1.55;margin-bottom:24px;max-width:60ch;}
+  .btn{
+    display:block;width:100%;text-align:center;padding:16px 20px;border-radius:10px;
+    background:var(--blue);color:#fff;font-weight:700;
+    font-size:16px;border:none;cursor:pointer;box-shadow:0 10px 24px rgba(46,94,255,0.24);
+    text-decoration:none;transition:transform .15s ease,background .15s ease;font-family:'Inter',sans-serif;
+  }
+  .btn:hover{background:var(--blue-deep);}
+  .btn:active{transform:scale(.98);}
+  .btn:focus-visible{outline:2px solid var(--blue-deep);outline-offset:2px;}
+  .btn-ghost{background:transparent;color:var(--blue);box-shadow:none;border:1.5px solid var(--line);}
+  /* Verde reservado — só nos 3 CTAs de conversão de verdade. */
+  .btn-cta{background:var(--green);box-shadow:0 10px 24px rgba(31,174,107,0.30);}
+  .btn-cta:hover{background:var(--green-deep);}
+  .microcopy{text-align:center;font-size:12px;color:var(--ink-soft);margin-top:12px;}
+  .guarantee-badge{display:flex;align-items:center;justify-content:center;gap:8px;
+    background:rgba(31,174,107,0.08);border:1px solid rgba(31,174,107,0.25);border-radius:10px;
+    padding:12px 14px;margin-top:14px;font-size:12.5px;color:var(--ink-soft);text-align:center;line-height:1.4;}
+  .guarantee-badge b{color:var(--green-deep);}
+
+  /* headline destacada — grifo em azul (cor de foco/confiança da marca),
+     não verde (reservado só pra conversão). */
+  .hl{background:rgba(46,94,255,0.12);color:var(--blue-deep);padding:0 6px;border-radius:5px;
+    box-decoration-break:clone;-webkit-box-decoration-break:clone;}
+  /* destaque de número/data — Space Grotesk Bold, laranja (urgência real) */
+  .num{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--orange-deep);}
+
+  /* QUESTIONS */
+  .q-title{font-size:21px;font-weight:700;line-height:1.3;margin-bottom:22px;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .option{
+    display:flex;align-items:center;gap:12px;padding:16px 16px;border:1.5px solid var(--line);
+    border-radius:10px;background:var(--card);cursor:pointer;font-size:15px;font-weight:500;
+    transition:all .15s ease;text-align:left;color:var(--ink);font-family:'Inter',sans-serif;
+  }
+  .option:hover{border-color:var(--blue);background:var(--offwhite);}
+  .option:focus-visible{outline:2px solid var(--blue-deep);outline-offset:2px;}
+  .option.selected{border-color:var(--blue);background:var(--offwhite);box-shadow:0 0 0 2px var(--blue) inset;}
+  .option-icon{width:34px;height:34px;border-radius:50%;background:var(--offwhite-deep);flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .option-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .option.selected .option-dot{border-color:var(--blue);background:var(--blue);}
+  .option-text{display:flex;flex-direction:column;gap:2px;}
+  .option-sub{font-size:12.5px;font-weight:400;color:var(--ink-soft);}
+  .back-link{display:inline-block;margin-top:20px;color:var(--ink-soft);font-size:13px;cursor:pointer;text-decoration:underline;}
+
+  /* CAPTURE */
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:6px;}
+  .field input{
+    width:100%;padding:14px 16px;border:1.5px solid var(--line);border-radius:8px;
+    font-size:15px;font-family:inherit;background:var(--card);color:var(--ink);
+  }
+  .field input:focus{outline:none;border-color:var(--blue);}
+  .privacy-note{font-size:12px;color:var(--ink-soft);text-align:center;margin-top:10px;}
+
+  /* RESULT */
+  .badge{display:inline-block;background:var(--orange);color:#fff;font-size:12px;font-weight:700;
+    padding:6px 14px;border-radius:99px;letter-spacing:.03em;text-transform:uppercase;margin-bottom:14px;}
+  .result-headline{font-size:23px;font-weight:700;line-height:1.3;margin-bottom:12px;}
+  .result-body{font-size:15px;line-height:1.65;color:var(--ink-soft);margin-bottom:18px;max-width:60ch;}
+  .result-body strong{color:var(--ink);}
+  .result-img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:var(--radius);box-shadow:var(--shadow);margin:16px 0;}
+  .tip-box{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--blue);
+    border-radius:8px;padding:16px;margin-bottom:20px;font-size:14px;line-height:1.6;}
+  .tip-box b{color:var(--blue-deep);}
+  .tip-box.objection-box{border-left-color:var(--orange);}
+  .tip-box.objection-box b{color:var(--orange-deep);}
+
+  /* FAQ / QUEBRA DE OBJEÇÕES — sanfona logo abaixo do CTA de compra na
+     tela de VSL (outputs/gabriel/desafio-reta-final-vsl/quebra-objecoes-completo.md).
+     Usa <details>/<summary> nativo — acessível, sem JS extra, sem risco
+     de bug de toggle. Borda laranja = mesmo padrão visual do objection-box. */
+  .faq-section{margin-top:36px;}
+  .faq-title{font-size:16px;font-weight:700;margin-bottom:4px;}
+  .faq-sub{font-size:13px;color:var(--ink-soft);margin-bottom:16px;}
+  .faq-item{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);
+    border-radius:8px;margin-bottom:10px;overflow:hidden;}
+  .faq-item summary{padding:14px 16px;font-size:14.5px;font-weight:600;cursor:pointer;
+    list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px;
+    color:var(--ink);}
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{content:'+';font-family:'Space Grotesk',sans-serif;font-size:20px;
+    font-weight:700;color:var(--orange-deep);flex-shrink:0;transition:transform .2s ease;}
+  .faq-item[open] summary::after{content:'−';}
+  .faq-item p{padding:0 16px 16px;font-size:14px;line-height:1.6;color:var(--ink-soft);}
+  .faq-item p strong{color:var(--ink);}
+
+  /* INTERSTITIAL — telas de "quebra de crença" entre perguntas, sem opções,
+     só uma explicação curta + botão de continuar (azul, não verde — não é
+     um CTA de conversão, é navegação). */
+  .interstitial-icon{width:44px;height:44px;border-radius:50%;background:var(--offwhite-deep);
+    border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;
+    font-size:20px;margin-bottom:16px;}
+  .interstitial-headline{font-size:20px;font-weight:700;line-height:1.3;margin-bottom:12px;}
+  .interstitial-body{font-size:15px;line-height:1.65;color:var(--ink-soft);margin-bottom:26px;max-width:60ch;}
+
+  /* VSL PLACEHOLDER — vídeo ainda não gravado. Trocar o conteúdo interno
+     por um <video> (ver comentário ESPAÇO RESERVADO PARA VSL no HTML)
+     assim que a gravação estiver pronta. */
+  .vsl-placeholder{background:var(--dark);border-radius:var(--radius);aspect-ratio:16/9;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    margin:16px 0 20px;color:#fff;text-align:center;padding:20px;}
+  .vsl-placeholder .play-icon{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.12);
+    border:1.5px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:22px;}
+  .vsl-placeholder .vsl-label{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.6);}
+
+  /* VSL de verdade (quando o <video> for adicionado no lugar do placeholder) */
+  .vsl-video{width:100%;border-radius:var(--radius);box-shadow:var(--shadow);
+    margin:16px 0 20px;background:var(--dark);display:block;}
+
+  /* UNLOCK BADGE — o resultado "libera o acesso" ao plano em vez de
+     empurrar preço direto; o preço só aparece no checkout (Ticto). */
+  .unlock-badge{background:var(--dark);border:1px solid rgba(46,94,255,.35);border-radius:12px;
+    padding:16px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px;
+    box-shadow:0 0 0 1px rgba(46,94,255,.12) inset;}
+  .unlock-badge .lock-icon{font-size:22px;flex-shrink:0;}
+  .unlock-badge span:last-child{color:#fff;font-size:13.5px;font-weight:600;line-height:1.4;}
+
+  /* PROGRESS BOXES — "Hoje" vs "Depois da prova" usando as PRÓPRIAS
+     respostas do estudante (dor real + estado futuro real), nunca número
+     inventado — compliance CONAR (sem promessa de resultado numérico). */
+  .progress-boxes{display:flex;gap:10px;margin:18px 0;}
+  .progress-box{flex:1;background:var(--card);border:1.5px solid var(--line);border-radius:10px;
+    padding:14px 12px;text-align:center;}
+  .progress-box.before{border-top:3px solid var(--red);}
+  .progress-box.after{border-top:3px solid var(--green-deep);}
+  .progress-box-label{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;
+    color:var(--ink-soft);font-weight:700;margin-bottom:8px;}
+  .progress-box-value{display:block;font-size:13.5px;font-weight:600;line-height:1.35;}
+
+  /* LOADING */
+  .loading-wrap{position:relative;width:140px;height:140px;margin:100px auto 26px;}
+  .loading-ring{width:100%;height:100%;transform:rotate(-90deg);}
+  .ring-bg{fill:none;stroke:var(--line);stroke-width:8;}
+  .ring-fill{fill:none;stroke:var(--blue);stroke-width:8;stroke-linecap:round;
+    stroke-dasharray:326.7;stroke-dashoffset:326.7;transition:stroke-dashoffset .25s ease;}
+  .loading-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:28px;color:var(--blue);
+    font-variant-numeric:tabular-nums;}
+  .loading-label{text-align:center;font-size:14px;color:var(--ink-soft);
+    transition:opacity .2s ease;padding:0 30px;}
+
+  /* JORNADA */
+  .journey{margin:24px 0 8px;}
+  .journey-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);
+    text-align:center;margin-bottom:20px;font-weight:700;}
+  .journey-track{position:relative;display:flex;justify-content:space-between;padding:0 2px;}
+  .journey-line{position:absolute;top:7px;left:16px;right:16px;height:3px;
+    background:linear-gradient(90deg,var(--blue),var(--green-deep));border-radius:99px;z-index:0;}
+  .journey-node{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;flex:1;text-align:center;}
+  .node-dot{width:16px;height:16px;border-radius:50%;background:var(--card);border:3px solid var(--blue);margin-bottom:8px;}
+  .journey-node.end .node-dot{border-color:var(--green-deep);background:var(--green-deep);}
+  .journey-node.here .node-dot{background:var(--blue);box-shadow:0 0 0 5px rgba(46,94,255,0.15);}
+  .node-tag{position:absolute;top:-22px;background:var(--blue);color:#fff;font-size:8.5px;font-weight:700;
+    padding:2px 7px;border-radius:99px;white-space:nowrap;}
+  .node-title{font-size:10.5px;color:var(--ink);line-height:1.3;font-weight:600;}
+  .node-title small{color:var(--ink-soft);font-size:9px;font-weight:500;}
+
+  @media (min-width:540px){
+    .app{margin:24px auto;min-height:auto;border-radius:24px;}
+    h1.hook{font-size:31px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="progress-wrap" id="progressWrap" style="display:none;">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+    <div class="progress-label" id="progressLabel">Pergunta 1 de 10</div>
+  </div>
+
+  <!-- STEP 0: HOOK -->
+  <div class="step active" id="step-hook">
+    <div style="padding:20px 20px 0;">
+      <div class="eyebrow">Desafio Reta Final — Protocolo 21 Dias</div>
+      <h1 class="hook">Descubra em poucos minutos <span class="hl">o plano certo pra sua reta final</span> do ENEM ou vestibular</h1>
+      <p class="sub">Sem decorar tudo de novo, sem virar a madrugada estudando, sem crise de ansiedade na hora da prova — só um plano estratégico pro tempo que você realmente tem até o dia <span class="num">08</span> (ou <span class="num">15</span>) de novembro.</p>
+      <img class="hero-img" src="images/hero-estudante-foco.jpg" alt="Estudante revisando o caderno, focado e confiante" style="margin-bottom:20px;">
+      <button class="btn btn-cta" onclick="showStepById('step-commit')">Começar o quiz →</button>
+      <p class="microcopy">Leva menos de 3 minutos. Sem cadastro por enquanto.</p>
+    </div>
+  </div>
+
+  <!-- STEP 0.5: COMPROMISSO — gatilho de coerência: pede um "sim" antes de
+       começar de verdade. "Agora não" não bloqueia, só suaviza a mensagem. -->
+  <div class="step" id="step-commit">
+    <div style="padding:8px 20px;">
+      <div class="interstitial-icon">🎯</div>
+      <h2 class="interstitial-headline">Antes de começar, precisamos combinar uma coisa</h2>
+      <p class="interstitial-body">Esse plano só funciona se for baseado nas suas respostas reais — não nas que você acha que "deveria" dar. Quanto mais honesto(a) você for, mais certeiro fica o resultado.</p>
+      <p class="q-title" style="font-size:17px;margin-bottom:16px;">Você topa ser honesto(a) nas respostas?</p>
+      <div class="options" id="commitOptions">
+        <button class="option" onclick="goToStep(1)">
+          <span class="option-icon">✅</span>
+          <span class="option-dot"></span>
+          <span class="option-text"><span>Sim, topo</span></span>
+        </button>
+        <button class="option" onclick="declineCommit()">
+          <span class="option-icon">🚫</span>
+          <span class="option-dot"></span>
+          <span class="option-text"><span>Agora não</span></span>
+        </button>
+      </div>
+      <p class="sub" id="commitDeclineMsg" style="display:none;margin-top:16px;margin-bottom:0;">Sem problema — mas são só uns minutinhos, e o plano fica bem mais certeiro se você for honesto(a). Bora tentar mesmo assim?</p>
+      <button class="btn" id="commitDeclineBtn" style="display:none;margin-top:14px;" onclick="goToStep(1)">Continuar mesmo assim →</button>
+    </div>
+  </div>
+
+  <!-- STEPS 1-12: QUESTIONS + INTERSTITIALS injected by JS -->
+  <div id="questions-container"></div>
+
+  <!-- STEP CAPTURE -->
+  <div class="step" id="step-capture">
+    <h2 style="font-size:21px;margin-bottom:8px;">Seu plano personalizado está pronto</h2>
+    <p class="sub" style="margin-bottom:20px;">Pra onde enviamos?</p>
+    <div class="field">
+      <label for="inputNome">Seu primeiro nome</label>
+      <input type="text" id="inputNome" placeholder="Ex: Lucas">
+    </div>
+    <div class="field">
+      <label for="inputEmail">Seu melhor e-mail</label>
+      <input type="email" id="inputEmail" placeholder="voce@email.com">
+    </div>
+    <div class="field">
+      <label for="inputWhats">WhatsApp (opcional, mas recomendado)</label>
+      <input type="tel" id="inputWhats" placeholder="(11) 99999-9999">
+    </div>
+    <button class="btn btn-cta" onclick="submitCapture()">Ver meu resultado →</button>
+    <p class="privacy-note">Seus dados são usados só pra te enviar o plano. Sem spam.</p>
+  </div>
+
+  <!-- STEP LOADING (transição entre captura e resultado) -->
+  <div class="step" id="step-loading">
+    <div class="loading-wrap">
+      <svg class="loading-ring" viewBox="0 0 120 120">
+        <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+        <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="52"></circle>
+      </svg>
+      <div class="loading-pct" id="loadingPct">0%</div>
+    </div>
+    <p class="loading-label" id="loadingLabel">Analisando suas respostas...</p>
+  </div>
+
+  <!-- STEP RESULT (conteúdo injetado por JS) -->
+  <div class="step" id="step-result"></div>
+
+  <!-- STEP VSL — só aparece depois que o estudante pede pra ver o plano
+       completo no resultado. É aqui, e só aqui, que a venda acontece; o
+       botão final leva direto pro checkout da Ticto. -->
+  <div class="step" id="step-vsl">
+    <div style="padding:8px 20px;">
+      <div class="eyebrow">Desafio Reta Final — Protocolo 21 Dias</div>
+      <h2 class="interstitial-headline" id="vslHeadline">Seu Plano Completo Pra Reta Final</h2>
+      <p class="sub">Assista até o final pra entender exatamente como funciona o Desafio de 21 Dias.</p>
+
+      <!-- ESPAÇO RESERVADO PARA VSL — trocar o <div class="vsl-placeholder">
+           abaixo por algo como:
+           <video class="vsl-video" controls playsinline poster="images/vsl-poster.jpg">
+             <source src="videos/desafio-reta-final-vsl.mp4" type="video/mp4">
+           </video>
+           assim que a VSL estiver gravada. -->
+      <div class="vsl-placeholder">
+        <div class="play-icon">▶</div>
+        <span class="vsl-label">Vídeo em breve</span>
+        <p style="font-size:13px;color:rgba(255,255,255,.75);max-width:32ch;">Aqui vai a VSL explicando como funciona o Desafio Reta Final — Protocolo 21 Dias.</p>
+      </div>
+
+      <button class="btn btn-cta" id="vslCtaBtn" onclick="goToCheckout()">Sim, quero o Desafio Reta Final →</button>
+      <p class="microcopy">Pagamento único, acesso imediato após a confirmação. Resultados individuais podem variar — o Desafio Reta Final é uma ferramenta de organização, revisão e controle emocional, e não garante aprovação.</p>
+      <div class="guarantee-badge">🛡️ <span>Garantia incondicional de <b>30 dias</b> — não gostou, devolvemos 100% do valor.</span></div>
+
+      <!-- QUEBRA DE OBJEÇÕES — mesmo conteúdo de
+           outputs/gabriel/desafio-reta-final-vsl/quebra-objecoes-completo.md,
+           condensado pra sanfona. Fica AQUI de propósito: quem já assistiu
+           a VSL e ainda não clicou no botão é exatamente quem tem uma
+           dúvida específica travando a decisão — a sanfona resolve isso
+           sem precisar de uma segunda VSL. -->
+      <div class="faq-section">
+        <div class="faq-title">Ainda com alguma dúvida?</div>
+        <div class="faq-sub">As perguntas mais comuns de quem tá decidindo agora.</div>
+
+        <details class="faq-item">
+          <summary>Não tenho tempo pra mais um curso</summary>
+          <p>Não é mais um curso pra encaixar do zero — é <strong>1 foco por dia</strong>, não um dia inteiro de estudo. O tempo que você já separa pra estudar continua o mesmo; o que muda é parar de gastar esse tempo sem direção.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Já tentei um cronograma antes e travei</summary>
+          <p>Isso não foi falta de força de vontade. Cronogramas genéricos tentam te ensinar o <strong>ano inteiro de novo</strong> — ninguém sustenta isso em 3 semanas. O Protocolo 21 Dias é ordem de prioridade, não volume: é estruturalmente diferente do que você já tentou.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Isso substitui meu cursinho ou meus estudos?</summary>
+          <p>Não precisa substituir. Ele funciona <strong>em cima</strong> do que você já estuda — é o filtro que te diz o que revisar primeiro com o tempo que sobrou.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Funciona só pro ENEM ou serve pro meu vestibular também?</summary>
+          <p>O mecanismo — priorizar o que mais cai e controlar a ansiedade de reta final — vale pra <strong>qualquer prova com data marcada</strong>. O conteúdo de revisão tem foco no ENEM por ser o exame com mais candidatos, mas a estrutura funciona pra qualquer vestibular.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Já estou quase sem tempo, ainda faz sentido comprar?</summary>
+          <p>Sim. O protocolo foi pensado tanto pra quem tem semanas de sobra (aí ele vira seu sprint final) quanto pra quem tem pouquíssimo tempo restante (aí você vai direto pras prioridades da Semana 2 e 3, sem gordura).</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Sou péssimo(a) em redação, isso ajuda de verdade?</summary>
+          <p>A Fórmula de Redação Nota 1000 traz estrutura de parágrafo pronta pra cada competência, banco de repertório com frase de exemplo usável, e lista de conectivos por função — material pra usar direto na próxima redação, não teoria solta.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Como recebo o produto depois de comprar?</summary>
+          <p>Acesso digital <strong>imediato</strong> após a confirmação do pagamento — ebook, checklist interativo e bônus, tudo liberado na hora.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Tem garantia?</summary>
+          <p><strong>Sim — 30 dias de garantia incondicional.</strong> Se por qualquer motivo o protocolo não for pra você, é só pedir o reembolso dentro desse prazo: devolução de 100% do valor, sem burocracia e sem precisar justificar.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Funciona no celular ou preciso de computador?</summary>
+          <p>Funciona em qualquer tela — celular, tablet ou computador. O checklist interativo salva seu progresso automaticamente.</p>
+        </details>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   DESAFIO RETA FINAL — Protocolo 21 Dias — Quiz Funnel
+   Vanilla JS, sem dependências externas. Mesma arquitetura
+   validada do "Desafio Shape de Noiva" (site/index.html),
+   adaptada ao conteúdo do ENEM/vestibular.
+   ========================================================= */
+
+// Formulário que recebe cada lead do quiz (Nome, E-mail, WhatsApp +
+// respostas completas). TROCAR pela URL real do formulário/webhook.
+const LEAD_WEBHOOK_URL = 'COLE_AQUI_A_URL_DO_FORMULARIO';
+
+// Checkout Ticto do Desafio Reta Final — o botão final da VSL leva
+// direto pra cá. TROCAR pelo link real assim que estiver criado na Ticto.
+const TICTO_CHECKOUT_URL = 'COLE_AQUI_O_LINK_DO_CHECKOUT_TICTO';
+
+const steps = [
+  // ── BLOCO 1: segmentação + dor + ceticismo + insegurança por área ─────
+  {
+    type: 'question',
+    id: 'q1',
+    title: 'Quantas semanas faltam até sua prova (ENEM ou vestibular)?',
+    options: [
+      { v: 'A', icon: '🔥', t: 'Menos de 2 semanas' },
+      { v: 'B', icon: '⏳', t: 'Entre 2 e 4 semanas' },
+      { v: 'C', icon: '📅', t: 'Entre 4 e 8 semanas' },
+      { v: 'D', icon: '🗓️', t: 'Mais de 8 semanas ou ainda sem data marcada' },
+    ]
+  },
+  {
+    type: 'question',
+    id: 'q2',
+    title: 'O que mais pesa agora quando você pensa na prova?',
+    options: [
+      { v: 'ansiedade', icon: '😰', t: 'A ansiedade que não passa', sub: 'É mais comum do que parece na reta final' },
+      { v: 'naosaber', icon: '🤯', t: 'A sensação de que não sei nada', sub: 'Quase sempre é falta de revisão organizada, não falta de conteúdo' },
+      { v: 'falta-tempo', icon: '⏱️', t: 'A falta de tempo pra revisar tudo', sub: 'Você não precisa revisar tudo — só o que mais cai' },
+      { v: 'medo-travar', icon: '🧊', t: 'O medo de travar na hora da prova', sub: 'Isso também dá pra treinar, não só o conteúdo' },
+    ]
+  },
+  {
+    type: 'question',
+    id: 'q3',
+    title: 'Você já tentou montar um cronograma de estudos antes e não conseguiu seguir?',
+    options: [
+      { v: 'varias', icon: '🔁', t: 'Sim, várias vezes' },
+      { v: 'uma', icon: '1️⃣', t: 'Sim, uma vez' },
+      { v: 'primeira', icon: '🌱', t: 'Não, essa é minha primeira tentativa séria' },
+      { v: 'tentando', icon: '⏳', t: 'Estou tentando agora, mas não consigo seguir' },
+    ]
+  },
+  {
+    type: 'question',
+    id: 'q4',
+    title: 'Qual área você sente mais insegurança?',
+    options: [
+      { v: 'linguagens', icon: '📖', t: 'Linguagens' },
+      { v: 'humanas', icon: '🌍', t: 'Humanas' },
+      { v: 'natureza', icon: '🧪', t: 'Natureza' },
+      { v: 'matematica', icon: '📐', t: 'Matemática' },
+      { v: 'redacao', icon: '✍️', t: 'Redação' },
+    ]
+  },
+  // ── quebra de crença #1: cronograma que travou não foi falta de vontade ─
+  {
+    type: 'interstitial',
+    id: 'int1',
+    icon: '💬',
+    image: 'interstitial-cronograma.jpg',
+    imageAlt: 'Planner e caderno de estudos organizados sobre a mesa',
+    headline: 'Antes de continuar...',
+    body: 'Se você já tentou montar um cronograma antes e não seguiu até o fim, o problema não foi falta de força de vontade. Foi tentar reaprender o ano inteiro de novo, do zero, em vez de revisar por prioridade — só o que mais cai, na ordem que mais importa pra reta final.',
+    cta: 'Entendi, continuar →',
+  },
+  // ── BLOCO 2: tempo real, redação e maior medo do dia da prova ──────────
+  {
+    type: 'question',
+    id: 'q5',
+    title: 'Quanto tempo por dia você consegue estudar de verdade, sem enrolar?',
+    options: [
+      { v: '<30', icon: '⏱️', t: 'Menos de 30 minutos' },
+      { v: '30-60', icon: '⏲️', t: 'Entre 30 minutos e 1 hora' },
+      { v: '1-2h', icon: '🕐', t: 'Entre 1 e 2 horas' },
+      { v: '>2h', icon: '📚', t: 'Mais de 2 horas' },
+    ]
+  },
+  {
+    type: 'question',
+    id: 'q6',
+    title: 'Como está sua redação hoje?',
+    options: [
+      { v: 'naoescrevobem', icon: '😕', t: 'Não escrevo bem' },
+      { v: 'travonaestrutura', icon: '🧱', t: 'Travo na estrutura do texto' },
+      { v: 'semrepertorio', icon: '📭', t: 'Não tenho repertório pra usar' },
+      { v: 'mesaiobem', icon: '✅', t: 'Me saio bem, só quero afinar' },
+    ]
+  },
+  {
+    type: 'question',
+    id: 'q7',
+    title: 'Quando pensa no dia da prova, o que mais te dá medo?',
+    options: [
+      { v: 'branco', icon: '⬜', t: 'Dar um branco na hora', sub: 'Isso também é treinável — igual você treina conteúdo' },
+      { v: 'tempo', icon: '⏰', t: 'O tempo acabar antes de terminar', sub: 'Tem técnica pra gerir o tempo da prova, não só estudar mais' },
+      { v: 'nervoso', icon: '😨', t: 'Passar mal de nervoso', sub: 'Controle emocional entra no plano, não é só "estuda mais e torce"' },
+      { v: 'naoterminar', icon: '📝', t: 'Não conseguir terminar a prova', sub: 'Simulado cronometrado resolve isso antes do dia real' },
+    ]
+  },
+  // ── quebra de crença #2: por que 21 dias (mecanismo do método) ────────
+  {
+    type: 'interstitial',
+    id: 'int2',
+    icon: '📅',
+    image: 'interstitial-calendario.jpg',
+    imageAlt: 'Calendário com a data da prova marcada',
+    headline: 'Por que 21 dias — e não o ano inteiro de novo?',
+    body: 'O Desafio Reta Final não é sobre voltar pro conteúdo do ano inteiro. São 21 dias organizados em 3 fases: primeiro um diagnóstico rápido do que você já sabe e do que ainda trava; depois revisão intensiva só do que mais cai, na ordem certa; e na reta final, simulado e controle emocional pra você chegar no dia 08 (ou 15) de novembro com a cabeça no lugar.',
+    cta: 'Continuar →',
+  },
+  // ── BLOCO 3: future-pacing, acompanhamento e fechamento ────────────────
+  {
+    type: 'question',
+    id: 'q8',
+    title: 'Se desse certo, o que mudaria de verdade quando você saísse da prova?',
+    options: [
+      { v: 'fizmeumelhor', icon: '💪', t: 'Eu sairia sabendo que fiz o meu melhor' },
+      { v: 'semfrio', icon: '🧘', t: 'Eu não sentiria mais esse frio na barriga' },
+      { v: 'orgulho', icon: '🏆', t: 'Eu sentiria orgulho de mim mesmo(a)' },
+      { v: 'valeuapena', icon: '🎯', t: 'Eu sentiria que valeu a pena o esforço' },
+    ]
+  },
+  {
+    type: 'question',
+    id: 'q9',
+    title: 'Prefere estudar sozinho(a) ou com alguém acompanhando o seu progresso?',
+    options: [
+      { v: 'sozinho', icon: '🎧', t: 'Sozinho(a), sempre funcionou assim pra mim' },
+      { v: 'acompanhado', icon: '🤝', t: 'Prefiro ter alguém acompanhando de perto' },
+      { v: 'nuncatestei', icon: '🌀', t: 'Nunca tentei com acompanhamento' },
+      { v: 'tantofaz', icon: '✅', t: 'Tanto faz, contanto que funcione' },
+    ]
+  },
+  {
+    type: 'question',
+    id: 'q10',
+    title: 'Pra fechar: qual ritmo combina mais com você?',
+    options: [
+      { v: 'intenso', icon: '⚡', t: 'Intenso desde já, quero resultado rápido' },
+      { v: 'progressivo', icon: '📈', t: 'Progressivo, aumentando aos poucos' },
+      { v: 'tantofaz', icon: '✅', t: 'Tanto faz, contanto que funcione' },
+      { v: 'naosei', icon: '🤷', t: 'Ainda não sei' },
+    ]
+  },
+];
+
+const answers = {};
+
+// Numera só as perguntas de verdade — as interstitials (quebra de crença)
+// não contam pra "Pergunta X de Y", só pra barra de progresso geral.
+let qCounter = 0;
+steps.forEach(s => { if (s.type === 'question') { qCounter++; s.qNumber = qCounter; } });
+const totalQuestions = qCounter;
+
+// Constrói os steps dinamicamente (perguntas + interstitials de quebra de crença)
+const container = document.getElementById('questions-container');
+steps.forEach((s, idx) => {
+  const div = document.createElement('div');
+  div.className = 'step';
+  div.id = 'step-s' + idx;
+
+  if (s.type === 'question') {
+    div.innerHTML = `
+      <div style="padding:8px 20px;">
+        <h2 class="q-title">${s.title}</h2>
+        <div class="options" data-qid="${s.id}">
+          ${s.options.map((o, oi) => `
+            <button class="option" data-value="${o.v}" onclick="selectOption(${idx}, ${oi}, this)">
+              ${o.icon ? `<span class="option-icon">${o.icon}</span>` : ''}
+              <span class="option-dot"></span>
+              <span class="option-text"><span>${o.t}</span>${o.sub ? `<span class="option-sub">${o.sub}</span>` : ''}</span>
+            </button>
+          `).join('')}
+        </div>
+        ${idx > 0 ? `<span class="back-link" onclick="goToStep(${idx})">← voltar</span>` : ''}
+      </div>
+    `;
+  } else {
+    // interstitial: sem opções, só a quebra de crença + botão de continuar
+    div.innerHTML = `
+      <div style="padding:8px 20px;">
+        ${s.image ? `<img class="hero-img" src="images/${s.image}" alt="${s.imageAlt || ''}" style="margin-bottom:20px;">` : ''}
+        <div class="interstitial-icon">${s.icon || '💡'}</div>
+        <h2 class="interstitial-headline">${s.headline}</h2>
+        <p class="interstitial-body">${s.body}</p>
+        <button class="btn" onclick="goToStep(${idx + 2})">${s.cta}</button>
+        <span class="back-link" onclick="goToStep(${idx})">← voltar</span>
+      </div>
+    `;
+  }
+  container.appendChild(div);
+});
+
+// Mostra uma tela pelo id direto — usado pelas telas FORA do fluxo numerado
+// de perguntas (compromisso): hook → commit → goToStep(1) entra de novo
+// no fluxo numerado normal, sem precisar renumerar nada.
+function showStepById(id) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('progressWrap').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Tela de compromisso: "Agora não" não trava o estudante pra sempre — só
+// troca pra uma mensagem mais suave e deixa ele(a) seguir mesmo assim
+// (gatilho de coerência sem virar dark pattern).
+function declineCommit() {
+  document.getElementById('commitOptions').style.display = 'none';
+  document.getElementById('commitDeclineMsg').style.display = 'block';
+  document.getElementById('commitDeclineBtn').style.display = 'block';
+}
+
+// Do resultado pra VSL: é SÓ aqui que a venda de verdade acontece — o
+// resultado entrega a personalização, a VSL entrega a oferta completa.
+function openVSL() {
+  const nome = answers.nome || 'Você';
+  const headline = document.getElementById('vslHeadline');
+  headline.textContent = `${nome}, Seu Plano Completo Pra Reta Final`;
+  showStepById('step-vsl');
+}
+
+// Botão final da VSL — único lugar do quiz que leva pro checkout. Antes
+// do link real da Ticto estar preenchido, avisa em vez de navegar pra
+// um lugar quebrado.
+function goToCheckout() {
+  if (TICTO_CHECKOUT_URL && !TICTO_CHECKOUT_URL.includes('COLE_AQUI')) {
+    window.location.href = TICTO_CHECKOUT_URL;
+  } else {
+    alert('Aqui entra o link real do checkout da Ticto — trocar TICTO_CHECKOUT_URL no topo do <script>.');
+  }
+}
+
+function goToStep(stepIndex) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  if (stepIndex === 0) {
+    document.getElementById('step-hook').classList.add('active');
+    document.getElementById('progressWrap').style.display = 'none';
+  } else if (stepIndex >= 1 && stepIndex <= steps.length) {
+    document.getElementById('step-s' + (stepIndex - 1)).classList.add('active');
+    document.getElementById('progressWrap').style.display = 'block';
+    updateProgress(stepIndex);
+  } else if (stepIndex === steps.length + 1) {
+    document.getElementById('step-capture').classList.add('active');
+    updateProgress(steps.length + 1);
+  }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress(stepIndex) {
+  const total = steps.length + 1; // +1 pra captura
+  const pct = Math.min(100, Math.round((stepIndex / total) * 100));
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  let label;
+  if (stepIndex <= steps.length) {
+    const s = steps[stepIndex - 1];
+    label = s.type === 'question'
+      ? `Pergunta ${s.qNumber} de ${totalQuestions}`
+      : `Só mais um instante...`;
+  } else {
+    label = `Quase lá...`;
+  }
+  document.getElementById('progressLabel').textContent = label;
+}
+
+function selectOption(posIdx, optIdx, el) {
+  const s = steps[posIdx];
+  const opt = s.options[optIdx];
+  answers[s.id] = opt.v;
+
+  // feedback visual
+  el.parentElement.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+
+  // avança automaticamente depois de um pequeno delay
+  setTimeout(() => {
+    if (posIdx + 1 < steps.length) {
+      goToStep(posIdx + 2); // próxima etapa (pergunta ou interstitial)
+    } else {
+      goToStep(steps.length + 1); // tela de captura
+    }
+  }, 280);
+}
+
+function submitCapture() {
+  const nome = document.getElementById('inputNome').value.trim();
+  const email = document.getElementById('inputEmail').value.trim();
+  const whats = document.getElementById('inputWhats').value.trim();
+
+  if (!nome || !email || !email.includes('@')) {
+    alert('Preenche seu nome e um e-mail válido pra gente liberar seu plano 📋');
+    return;
+  }
+
+  answers.nome = nome;
+  answers.email = email;
+  answers.whats = whats;
+
+  // Envia o lead (nome, e-mail, whatsapp + todas as respostas do quiz)
+  // pro formulário/webhook configurado no topo do script.
+  if (LEAD_WEBHOOK_URL && !LEAD_WEBHOOK_URL.includes('COLE_AQUI')) {
+    fetch(LEAD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', 'Accept':'application/json'},
+      body: JSON.stringify(answers),
+    }).catch(() => { /* falha de rede não deve travar a experiência do estudante */ });
+  }
+
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-loading').classList.add('active');
+  document.getElementById('progressWrap').style.display = 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+  startLoadingSequence();
+}
+
+function startLoadingSequence() {
+  const messages = [
+    'Analisando suas respostas...',
+    'Calculando quantas semanas faltam até sua prova...',
+    'Montando seu plano de 21 dias...',
+    'Personalizando sua reta final...',
+  ];
+  const circumference = 2 * Math.PI * 52; // ~326.7
+  const ringFill = document.getElementById('ringFill');
+  const pctLabel = document.getElementById('loadingPct');
+  const msgLabel = document.getElementById('loadingLabel');
+  ringFill.style.strokeDasharray = circumference;
+  ringFill.style.strokeDashoffset = circumference;
+  msgLabel.textContent = messages[0];
+  msgLabel.style.opacity = 1;
+
+  const totalDuration = 2400; // ms — rápido o suficiente pra não cansar, longo o suficiente pra parecer processamento real
+  const stepTime = 60;
+  const totalSteps = totalDuration / stepTime;
+  let step = 0;
+  let msgIndex = 0;
+
+  const interval = setInterval(() => {
+    step++;
+    const pct = Math.min(100, Math.round((step / totalSteps) * 100));
+    ringFill.style.strokeDashoffset = circumference - (pct / 100) * circumference;
+    pctLabel.textContent = pct + '%';
+
+    const newMsgIndex = Math.min(messages.length - 1, Math.floor((pct / 100) * messages.length));
+    if (newMsgIndex !== msgIndex) {
+      msgIndex = newMsgIndex;
+      msgLabel.style.opacity = 0;
+      setTimeout(() => { msgLabel.textContent = messages[msgIndex]; msgLabel.style.opacity = 1; }, 150);
+    }
+
+    if (step >= totalSteps) {
+      clearInterval(interval);
+      setTimeout(() => {
+        renderResult();
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        document.getElementById('step-result').classList.add('active');
+        window.scrollTo({top:0, behavior:'smooth'});
+      }, 350);
+    }
+  }, stepTime);
+}
+
+// Dor real declarada na Q2 — usada na progress-box "Hoje" e no corpo do
+// resultado. Nunca um número inventado.
+const beforeBadges = {
+  ansiedade: '😰 Com a ansiedade que não passa',
+  naosaber: '🤯 Com a sensação de não saber nada',
+  'falta-tempo': '⏱️ Sem tempo pra revisar tudo',
+  'medo-travar': '🧊 Com medo de travar na hora',
+};
+const painWords = {
+  ansiedade: 'a ansiedade que não passa',
+  naosaber: 'a sensação de não saber nada',
+  'falta-tempo': 'a falta de tempo pra revisar tudo',
+  'medo-travar': 'o medo de travar na hora da prova',
+};
+
+const profiles = {
+  A: {
+    badge: 'Modo Sobrevivência',
+    headline: (n) => `${n}, sua prova está logo ali — cada dia agora vale muito.`,
+    body: (dor) => `Você não tem tempo pra revisar o ano inteiro de novo. Por isso o Desafio Reta Final foi pensado pra <strong>21 dias</strong> — direto pro que mais cai, priorizando exatamente ${dor} primeiro.`,
+  },
+  B: {
+    badge: 'Reta Final de Verdade',
+    headline: (n) => `${n}, seu tempo é suficiente pra uma virada real — se começar agora.`,
+    body: (dor) => `Dá pra transformar essas semanas num plano com ritmo intenso, mas sem virar pânico. O Desafio ataca ${dor} desde a primeira semana, sem te fazer perder tempo revendo o que você já sabe.`,
+  },
+  C: {
+    badge: 'Ainda Dá Tempo de Fazer Direito',
+    headline: (n) => `${n}, você tem o tempo que a maioria dos estudantes gostaria de ter agora.`,
+    body: (dor) => `Esse tempo é raro — e a forma de aproveitar bem não é estudar mais, é estudar com prioridade. O Desafio já trabalha ${dor} como primeira fase de um plano maior até o dia da prova.`,
+  },
+  D: {
+    badge: 'Construindo Desde Já',
+    headline: (n) => `${n}, não importa quando for sua prova — o plano certo começa a valer a partir de hoje.`,
+    body: (dor) => `Quando a data chegar mais perto, você já vai estar revisando por prioridade, em vez de correndo atrás do prejuízo. Comece tratando ${dor} agora, enquanto o tempo ainda está a seu favor.`,
+  },
+};
+
+// Ecoa a resposta da Q8 (o que mudaria de verdade ao sair da prova) direto
+// no corpo do resultado — fecha o loop emocional aberto na pergunta.
+const futureEcho = {
+  fizmeumelhor: ' E no fim, você vai sair sabendo que fez o seu melhor — isso já é a vitória que ninguém tira de você.',
+  semfrio: ' Aquele frio na barriga começa a diminuir quando você entra na prova sabendo que tem um plano, não um chute.',
+  orgulho: ' A ideia é você sair de lá com orgulho de si mesmo(a), independente do resultado — porque você fez o que precisava ser feito.',
+  valeuapena: ' No final, você vai sentir que cada um desses 21 dias valeu a pena.',
+};
+
+// Badges das caixas "Hoje / Depois da prova" — usa a DOR real (Q2) e o
+// ESTADO FUTURO real (Q8) que o próprio estudante escolheu no quiz. Nada
+// de número inventado (nota, %) — compliance CONAR (seção 5 do BRAND.md).
+const afterBadges = {
+  fizmeumelhor: '💪 Sabendo que deu o seu melhor',
+  semfrio: '🧘 Sem aquele frio na barriga',
+  orgulho: '🏆 Orgulhoso(a) de si mesmo(a)',
+  valeuapena: '🎯 Sentindo que valeu a pena',
+};
+
+// Quebra a objeção que o ESTUDANTE MESMO declarou (Q3 + Q7) — é a
+// personalização mais forte pra público frio: responder exatamente à
+// dúvida/medo que ele relatou.
+function buildObjectionBlock() {
+  const trustMsgs = {
+    varias: 'Você disse que já tentou montar um cronograma antes, mais de uma vez, e não conseguiu seguir.',
+    uma: 'Você disse que já tentou montar um cronograma antes e não seguiu até o fim.',
+    tentando: 'Você disse que está tentando organizar seus estudos agora, mas não está conseguindo seguir.',
+  };
+  const fearMsgs = {
+    branco: 'o plano inclui treino de simulado cronometrado — dar um branco também se treina, não só o conteúdo.',
+    tempo: 'o plano treina gestão de tempo de prova, não só quantidade de conteúdo, pra você não travar no relógio.',
+    nervoso: 'controle emocional entra como parte do plano, não é só "estuda mais e torce".',
+    naoterminar: 'os simulados cronometrados da reta final são feitos exatamente pra isso parar de acontecer.',
+  };
+
+  const trust = trustMsgs[answers.q3];
+  const fear = fearMsgs[answers.q7];
+  if (!trust && !fear) return '';
+
+  const parts = [trust, fear].filter(Boolean).join(' ');
+  return `
+      <div class="tip-box objection-box">
+        <b>Por isso é diferente dessa vez:</b> ${parts}
+      </div>
+  `;
+}
+
+function renderResult() {
+  const profileKey = answers.q1 || 'B';
+  const profile = profiles[profileKey];
+  const dor = painWords[answers.q2] || 'o que mais pesa hoje';
+  const nome = answers.nome || 'Você';
+  const echo = futureEcho[answers.q8] || '';
+  const beforeBadge = beforeBadges[answers.q2] || '😕 Sem plano claro pra reta final';
+  const afterBadge = afterBadges[answers.q8] || '🔓 Com um plano pra reta final';
+
+  const html = `
+    <div style="padding:8px 20px;">
+      <div class="unlock-badge">
+        <span class="lock-icon">🔓</span>
+        <span>Seu plano personalizado, baseado nas suas respostas, foi liberado</span>
+      </div>
+
+      <span class="badge">${profile.badge}</span>
+      <h2 class="result-headline">${profile.headline(nome)}</h2>
+      <p class="result-body">${profile.body(dor)}${echo}</p>
+
+      <div class="progress-boxes">
+        <div class="progress-box before">
+          <span class="progress-box-label">Hoje</span>
+          <span class="progress-box-value">${beforeBadge}</span>
+        </div>
+        <div class="progress-box after">
+          <span class="progress-box-label">Depois da prova</span>
+          <span class="progress-box-value">${afterBadge}</span>
+        </div>
+      </div>
+
+      <div class="journey">
+        <div class="journey-label">Sua jornada nos próximos 21 dias</div>
+        <div class="journey-track">
+          <div class="journey-line"></div>
+          <div class="journey-node here">
+            <span class="node-tag">Você está aqui</span>
+            <span class="node-dot"></span>
+            <span class="node-title">Hoje</span>
+          </div>
+          <div class="journey-node">
+            <span class="node-dot"></span>
+            <span class="node-title">Semana 1<br><small>Diagnóstico</small></span>
+          </div>
+          <div class="journey-node">
+            <span class="node-dot"></span>
+            <span class="node-title">Semana 2<br><small>Revisão por prioridade</small></span>
+          </div>
+          <div class="journey-node end">
+            <span class="node-dot"></span>
+            <span class="node-title">Dia da Prova<br><small>08 ou 15/11</small></span>
+          </div>
+        </div>
+      </div>
+
+      <img class="result-img" src="images/resultado-estudante-prova.jpg" alt="Estudante focado durante a prova, no controle do tempo">
+
+      <div class="tip-box">
+        <b>Dica pra hoje, de graça:</b> antes de estudar conteúdo novo, revise as questões que você já errou antes — é mais rápido fechar buracos que já existem do que tentar ver tudo do zero, e é exatamente com isso que a Semana 1 do Desafio começa.
+      </div>
+
+      ${buildObjectionBlock()}
+
+      <button class="btn" onclick="openVSL()">Ver meu plano completo →</button>
+      <p class="microcopy">Resultados de aprovação dependem de fatores individuais e não são garantidos. O Desafio Reta Final é uma ferramenta de organização, revisão e controle emocional — consulte sempre os canais oficiais do seu vestibular.</p>
+    </div>
+  `;
+  document.getElementById('step-result').innerHTML = html;
+}
+</script>
+</body>
+</html>

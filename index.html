@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diagnóstico de Aprovação — Desafio Reta Final</title>
+<meta name="description" content="7 perguntas estratégicas pra revelar seu maior obstáculo na reta final do ENEM e o protocolo certo pra atacar isso nos próximos 21 dias.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESAFIO RETA FINAL — Diagnóstico de Aprovação (Quiz v2)
+   Design system conforme especificação fornecida pelo usuário:
+   tema escuro, vermelho/amarelo de destaque, Inter em todos os
+   pesos, animações fade+slide-up. Ver identidade-marca/BRAND.md
+   pra regras de compliance (nunca prometer aprovação garantida)
+   e política de garantia (30 dias) aplicadas em todo o texto.
+   ============================================================ */
+:root{
+  --bg-primary:#1C1C1E;
+  --bg-secondary:#2C2C2E;
+  --red:#FF3B30;
+  --red-hover:#FF6259;
+  --yellow:#FFD60A;
+  --green:#34C759;
+  --purple:#AF52DE;
+  --text-primary:#FFFFFF;
+  --text-secondary:#8E8E93;
+  --line:#3A3A3C;
+  --radius:16px;
+  --profile:#FF3B30; /* sobrescrita por JS por perfil no resultado */
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:radial-gradient(circle at top right, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  color:var(--text-primary);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+.app-shell{max-width:900px;margin:0 auto;padding:24px 20px 120px;min-height:100vh;}
+.progress-wrap{position:sticky;top:0;z-index:30;padding:0 0 18px;display:none;}
+.progress-wrap.show{display:block;}
+.progress-bar{height:6px;background:var(--bg-secondary);border-radius:99px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--yellow);border-radius:99px;width:0%;transition:width .6s ease-out;}
+.progress-label{font-size:12px;font-weight:700;color:var(--yellow);letter-spacing:2px;text-transform:uppercase;margin-top:10px;}
+
+.screen{animation:fadeSlideUp .4s ease;}
+@keyframes fadeSlideUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+@media (prefers-reduced-motion:reduce){.screen{animation:none;}}
+
+.card{
+  background:linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  border-radius:24px;
+  padding:48px 32px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+@media (max-width:600px){.card{padding:32px 20px;}}
+
+/* ── INTRO ── */
+.intro-icon{font-size:64px;text-align:center;animation:pulseGlow 2.2s ease-in-out infinite;}
+@keyframes pulseGlow{0%,100%{filter:drop-shadow(0 0 0 rgba(255,214,10,0));transform:scale(1);}50%{filter:drop-shadow(0 0 18px rgba(255,214,10,0.55));transform:scale(1.06);}}
+.intro-headline{font:900 40px/1.15 'Inter';color:var(--text-primary);text-align:center;margin-top:20px;}
+@media (max-width:600px){.intro-headline{font-size:30px;}}
+.intro-sub{font:600 20px/1.4 'Inter';color:var(--yellow);text-align:center;margin-top:12px;}
+.intro-desc{font:400 17px/1.6 'Inter';color:var(--text-secondary);text-align:center;max-width:600px;margin:20px auto 0;}
+.stats-bar{display:flex;gap:24px;margin-top:36px;padding:22px;background:rgba(255,214,10,0.1);border:1px solid rgba(255,214,10,0.3);border-radius:16px;flex-wrap:wrap;justify-content:center;}
+.stat-item{text-align:center;flex:1;min-width:110px;}
+.stat-number{font:900 26px/1 'Inter';color:var(--text-primary);}
+.stat-label{font:500 12px/1.3 'Inter';color:var(--text-secondary);margin-top:6px;}
+
+.btn{
+  display:block;width:100%;text-align:center;border:none;cursor:pointer;
+  font:700 18px 'Inter';color:#fff;background:var(--red);
+  padding:18px 40px;border-radius:12px;
+  box-shadow:0 8px 24px rgba(255,59,48,0.4);
+  transition:transform .2s ease, box-shadow .2s ease, background .2s ease;
+  text-decoration:none;
+}
+.btn:hover{background:var(--red-hover);transform:scale(1.02);box-shadow:0 12px 32px rgba(255,59,48,0.5);}
+.btn:active{transform:scale(0.99);}
+.btn-glow{animation:pulseGlow 2s infinite;}
+.btn-wide{max-width:420px;margin:40px auto 0;}
+.disclaimer{font:400 13px 'Inter';color:var(--text-secondary);text-align:center;margin-top:14px;}
+
+/* ── PERGUNTAS ── */
+.q-pretext{font:700 12px 'Inter';color:var(--yellow);letter-spacing:2px;text-transform:uppercase;}
+.q-pretext.last{color:var(--red);}
+.q-title{font:700 32px/1.3 'Inter';color:var(--text-primary);margin-top:14px;}
+@media (max-width:600px){.q-title{font-size:24px;}}
+.q-helper{font:400 15px/1.5 'Inter';color:var(--text-secondary);margin-top:14px;padding:14px 16px;background:rgba(255,214,10,0.05);border-left:4px solid var(--yellow);border-radius:8px;}
+.q-options{margin-top:28px;display:flex;flex-direction:column;gap:14px;}
+.q-option{
+  display:flex;align-items:flex-start;gap:14px;
+  background:var(--bg-secondary);border:2px solid var(--line);border-radius:12px;
+  padding:20px;cursor:pointer;transition:all .25s ease;text-align:left;
+}
+.q-option:hover{border-color:var(--red);background:rgba(255,59,48,0.1);transform:translateX(8px);}
+.q-option .icon{font-size:24px;flex-shrink:0;line-height:1;}
+.q-option .body{flex:1;}
+.q-option .opt-text{font:500 18px/1.4 'Inter';color:var(--text-primary);}
+.q-option .opt-sub{font:400 14px/1.4 'Inter';color:var(--text-secondary);margin-top:4px;}
+.q-tag{display:inline-block;font:700 11px 'Inter';letter-spacing:.5px;text-transform:uppercase;padding:4px 10px;border-radius:6px;margin-top:8px;color:#14151A;}
+.q-course{font:italic 400 13px 'Inter';color:var(--text-secondary);margin-top:6px;}
+
+.objection-banner{
+  position:fixed;left:0;right:0;bottom:0;z-index:9999;
+  background:linear-gradient(90deg, var(--red) 0%, var(--red-hover) 100%);
+  color:#fff;padding:20px;border-radius:16px 16px 0 0;
+  font:600 15px/1.5 'Inter';text-align:center;
+  animation:slideUpBanner .5s ease;
+  max-width:900px;margin:0 auto;
+}
+@keyframes slideUpBanner{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.objection-banner[hidden]{display:none;}
+
+/* ── LOADING / PROCESSING ── */
+.processing-wrap{text-align:center;padding:60px 20px;}
+.loader-ring{width:110px;height:110px;border-radius:50%;border:8px solid var(--bg-secondary);border-top-color:var(--yellow);margin:0 auto;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.proc-steps{margin-top:36px;text-align:left;max-width:420px;margin-left:auto;margin-right:auto;}
+.proc-step{font:500 17px 'Inter';color:var(--text-secondary);opacity:0;padding:6px 0;animation:fadeIn .5s ease forwards;}
+@keyframes fadeIn{to{opacity:1;}}
+.proc-urgency{font:600 15px 'Inter';color:var(--red);margin-top:36px;animation:fadePulse 1.5s infinite;}
+@keyframes fadePulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+
+/* ── LEAD CAPTURE ── */
+.lead-icon{font-size:40px;text-align:center;}
+.lead-headline{font:800 28px/1.3 'Inter';color:var(--text-primary);text-align:center;margin-top:16px;}
+.lead-sub{font:400 16px/1.5 'Inter';color:var(--text-secondary);text-align:center;margin-top:10px;}
+.lead-urgency{font:600 14px 'Inter';color:var(--yellow);text-align:center;margin-top:18px;padding:12px 16px;background:rgba(255,214,10,0.08);border-radius:10px;}
+.lead-field{margin-top:18px;}
+.lead-field label{font:600 13px 'Inter';color:var(--text-secondary);display:block;margin-bottom:6px;}
+.lead-field input{
+  width:100%;padding:14px 16px;border-radius:10px;border:2px solid var(--line);
+  background:var(--bg-primary);color:var(--text-primary);font:500 15px 'Inter';
+}
+.lead-field input:focus{outline:none;border-color:var(--red);}
+.lead-field .field-helper{font:400 12px 'Inter';color:var(--text-secondary);margin-top:5px;}
+.lead-privacy{font:400 12px 'Inter';color:var(--text-secondary);text-align:center;margin-top:16px;}
+
+/* ── RESULTADO ── */
+.result-badge{display:inline-block;font:700 12px 'Inter';letter-spacing:1.5px;text-transform:uppercase;color:var(--profile);border:1px solid var(--profile);padding:6px 14px;border-radius:99px;}
+.result-icon{font-size:56px;margin-top:20px;}
+.result-headline{font:900 38px/1.2 'Inter';color:var(--text-primary);margin-top:16px;}
+@media (max-width:600px){.result-headline{font-size:28px;}}
+.result-sub{font:600 21px/1.4 'Inter';color:var(--profile);margin-top:12px;}
+.result-desc{font:400 17px/1.6 'Inter';color:var(--text-secondary);margin-top:16px;max-width:65ch;}
+.section-title{font:800 22px 'Inter';color:var(--text-primary);margin-bottom:24px;}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;background:color-mix(in srgb, var(--profile) 10%, transparent);border:2px solid color-mix(in srgb, var(--profile) 30%, transparent);border-radius:16px;padding:32px 20px;margin:44px 0;}
+@media (max-width:600px){.stats-grid{grid-template-columns:1fr;gap:16px;}}
+.stat-big{text-align:center;}
+.stat-big .num{font:900 30px 'Inter';color:var(--profile);}
+.stat-big .lbl{font:500 13px 'Inter';color:var(--text-secondary);margin-top:6px;line-height:1.4;}
+.reason-card{background:var(--bg-secondary);border-radius:12px;padding:26px;margin-bottom:16px;}
+.reason-card .icon{font-size:26px;}
+.reason-card h4{font:700 18px 'Inter';color:var(--text-primary);margin-top:10px;}
+.reason-card p{font:400 15px/1.6 'Inter';color:var(--text-secondary);margin-top:8px;}
+.harsh-box{background:color-mix(in srgb, var(--profile) 15%, transparent);border:2px solid var(--profile);border-radius:16px;padding:32px;font:600 18px/1.6 'Inter';color:var(--text-primary);margin:44px 0;}
+.solution-box{background:linear-gradient(135deg, rgba(255,214,10,0.1) 0%, rgba(255,214,10,0.05) 100%);border:2px solid rgba(255,214,10,0.3);border-radius:16px;padding:32px;margin:44px 0;}
+.solution-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.08);}
+.solution-item:last-child{border-bottom:none;}
+.solution-item .icon{color:var(--green);font-size:20px;flex-shrink:0;}
+.solution-item h5{font:700 16px 'Inter';color:var(--text-primary);}
+.solution-item p{font:400 14px/1.5 'Inter';color:var(--text-secondary);margin-top:4px;}
+.urgency-box{background:rgba(255,59,48,0.15);border:2px solid var(--red);border-radius:16px;padding:36px;text-align:center;margin:44px 0;}
+.urgency-box .icon{font-size:32px;}
+.urgency-box h4{font:800 22px 'Inter';color:var(--text-primary);margin-top:10px;}
+.urgency-box p{font:400 15px/1.6 'Inter';color:var(--text-secondary);margin-top:10px;max-width:60ch;margin-left:auto;margin-right:auto;}
+.countdown{font:900 44px 'Inter';color:var(--yellow);margin-top:16px;}
+.countdown-label{font:600 13px 'Inter';color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;}
+.cta-block{background:linear-gradient(135deg, var(--red) 0%, var(--red-hover) 100%);border-radius:16px;padding:48px 32px;text-align:center;box-shadow:0 20px 60px rgba(255,59,48,0.4);margin:44px 0;}
+.cta-block h4{font:800 24px 'Inter';color:#fff;}
+.cta-block p{font:500 15px 'Inter';color:rgba(255,255,255,.9);margin-top:8px;}
+.cta-block .btn{background:#fff;color:var(--red);max-width:420px;margin:24px auto 0;box-shadow:0 10px 30px rgba(0,0,0,.25);}
+.cta-block .btn:hover{background:#f2f2f2;}
+.cta-price{font:700 15px 'Inter';color:#fff;margin-top:16px;}
+.cta-guarantee{font:600 13px 'Inter';color:rgba(255,255,255,.9);margin-top:8px;}
+.preview-grid{display:grid;grid-template-columns:1fr;gap:16px;margin:44px 0;}
+.preview-card{background:var(--bg-secondary);border-radius:12px;padding:22px;border-left:4px solid var(--profile);}
+.preview-card .tag{font:700 11px 'Inter';color:var(--profile);text-transform:uppercase;letter-spacing:1px;}
+.preview-card h5{font:700 17px 'Inter';color:var(--text-primary);margin-top:6px;}
+.preview-card p{font:400 14px/1.6 'Inter';color:var(--text-secondary);margin-top:6px;}
+.faq-item{background:var(--bg-secondary);border-radius:12px;margin-bottom:12px;overflow:hidden;border-left:4px solid var(--profile);}
+.faq-item summary{padding:18px 20px;font:600 16px 'Inter';color:var(--text-primary);cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px;}
+.faq-item summary::-webkit-details-marker{display:none;}
+.faq-item summary::after{content:'+';font:800 20px 'Inter';color:var(--profile);}
+.faq-item[open] summary::after{content:'−';}
+.faq-item p{padding:0 20px 20px;font:400 15px/1.6 'Inter';color:var(--text-secondary);}
+
+.sticky-cta{position:fixed;left:0;right:0;bottom:0;z-index:500;background:linear-gradient(90deg, var(--red) 0%, var(--red-hover) 100%);padding:16px 20px;box-shadow:0 -10px 40px rgba(0,0,0,0.35);}
+.sticky-cta-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.sticky-cta .price{font:700 15px 'Inter';color:#fff;}
+.sticky-cta .btn{width:auto;padding:14px 28px;background:#fff;color:var(--red);box-shadow:none;margin:0;}
+.sticky-cta .btn:hover{background:#f2f2f2;}
+@media (max-width:600px){.sticky-cta-inner{flex-direction:column;}.sticky-cta .btn{width:100%;}}
+
+/* ── VSL CINÉTICA (fecha o quiz, logo antes do botão de checkout) ──
+   Implementação real da micro-VSL de 120s pedida pelo usuário: em vez
+   de vídeo renderizado (sem b-roll disponível aqui), roda como
+   sequência de tipografia cinética animada, ritmo automático, com
+   opção de pular. Ver outputs/gabriel/desafio-reta-final-vsl/ pro
+   roteiro completo formatado pra produção de vídeo real (com b-roll)
+   quando o usuário quiser gravar de verdade. */
+.vsl-wrap{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px 10px;position:relative;}
+.vsl-beat{font:900 clamp(28px,7vw,56px)/1.25 'Inter';color:var(--text-primary);opacity:0;transform:translateY(14px);transition:opacity .5s ease, transform .5s ease;max-width:720px;}
+.vsl-beat.show{opacity:1;transform:translateY(0);}
+.vsl-beat.red{color:var(--red);animation:vslPulse 1.2s ease-in-out infinite;}
+@keyframes vslPulse{0%,100%{opacity:1;}50%{opacity:.72;}}
+.vsl-beat.small{font-size:clamp(18px,4vw,24px);font-weight:500;color:var(--text-secondary);}
+.vsl-beat.yellow{color:var(--yellow);}
+.vsl-progress{position:absolute;top:0;left:0;right:0;height:4px;background:var(--bg-secondary);}
+.vsl-progress-fill{height:100%;background:var(--red);width:0%;transition:width .1s linear;}
+.vsl-skip{position:absolute;top:20px;right:0;font:600 13px 'Inter';color:var(--text-secondary);background:none;border:none;cursor:pointer;text-decoration:underline;}
+.vsl-final{opacity:0;transform:translateY(14px);transition:opacity .6s ease, transform .6s ease;}
+.vsl-final.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel"></div>
+  </div>
+  <div id="screen" class="screen"></div>
+</div>
+
+<div id="objectionBanner" class="objection-banner" hidden></div>
+
+<script>
+/* =========================================================
+   DIAGNÓSTICO DE APROVAÇÃO — Desafio Reta Final (Quiz v2)
+   Vanilla JS, sem dependências externas.
+
+   NOTA DE INTEGRIDADE (aplicar sempre que este arquivo for
+   editado): este quiz NÃO usa depoimento fabricado, estatística
+   inventada, citação de estudo falsa ou preço divergente do
+   real. Regra vinda de identidade-marca/BRAND.md seção 5
+   (compliance CONAR) e seção 7 (garantia real de 30 dias).
+   Ver outputs/gabriel/desafio-reta-final-vsl/ pro contexto
+   completo de por que essa regra existe (precedente real de
+   condenação judicial por publicidade enganosa no nicho).
+   ========================================================= */
+
+const LEAD_WEBHOOK_URL = 'COLE_AQUI_A_URL_DO_FORMULARIO';
+const TICTO_CHECKOUT_URL = 'COLE_AQUI_O_LINK_DO_CHECKOUT_TICTO';
+const PRECO_REAL = 'R$ 34,90 · pagamento único';
+const EXAM_DATE = new Date('2026-11-08T00:00:00');
+
+function diasAteProva(){
+  const diff = Math.ceil((EXAM_DATE - new Date()) / 86400000);
+  return diff > 0 ? diff : 0;
+}
+
+/* ---------- PERGUNTAS (7) ---------- */
+const QUESTIONS = [
+  {
+    id: 'q1', category: 'tempo_preparacao', progressPct: 14, progressLabel: 'PERGUNTA 1 DE 7',
+    question: 'Quantas horas REAIS você consegue estudar por dia até o ENEM?',
+    helper: '💡 Seja honesto. Inclua trabalho, escola e compromissos obrigatórios.',
+    options: [
+      {id:'1a', icon:'⏰', text:'Menos de 2 horas por dia', sub:'Tenho trabalho/escola em período integral', value:'tempo_critico'},
+      {id:'1b', icon:'📚', text:'De 2 a 4 horas por dia', sub:'Consigo encaixar meio período de estudo', value:'tempo_moderado'},
+      {id:'1c', icon:'🎯', text:'De 4 a 6 horas por dia', sub:'Tenho flexibilidade na rotina', value:'tempo_bom'},
+      {id:'1d', icon:'🔥', text:'Mais de 6 horas por dia', sub:'Posso me dedicar quase integralmente', value:'tempo_ideal'}
+    ],
+    objection: '⚠️ Quanto menos tempo você tem, MAIS importante é ter prioridade clara. Não dá pra desperdiçar nem 1 hora estudando sem direção.'
+  },
+  {
+    id: 'q2', category: 'nivel_conhecimento', progressPct: 28, progressLabel: 'PERGUNTA 2 DE 7',
+    question: 'Se você fizesse o ENEM HOJE, qual nota você tiraria?',
+    helper: '💡 Baseie-se no seu último simulado ou numa autoavaliação realista.',
+    options: [
+      {id:'2a', icon:'📖', text:'Abaixo de 500 pontos', sub:'Preciso reforçar o básico em várias matérias', value:'nivel_iniciante', tag:'PROTOCOLO INTENSIVO', tagColor:'#FF3B30'},
+      {id:'2b', icon:'📊', text:'Entre 500 e 600 pontos', sub:'Tenho base, mas ainda com lacunas', value:'nivel_intermediario', tag:'PROTOCOLO ESTRATÉGICO', tagColor:'#FFD60A'},
+      {id:'2c', icon:'🎯', text:'Entre 600 e 700 pontos', sub:'Domino o básico, preciso aprofundar', value:'nivel_avancado', tag:'PROTOCOLO REFINAMENTO', tagColor:'#34C759'},
+      {id:'2d', icon:'👑', text:'Acima de 700 pontos', sub:'Busco os últimos pontos pra nota alta', value:'nivel_expert', tag:'PROTOCOLO ELITE', tagColor:'#AF52DE'}
+    ],
+    objection: '🔍 Não importa sua nota atual. O que muda o jogo nos próximos 21 dias é ter prioridade clara — não tentar revisar tudo de novo, do zero.'
+  },
+  {
+    id: 'q3', category: 'principal_desafio', progressPct: 42, progressLabel: 'PERGUNTA 3 DE 7',
+    question: 'Qual seu MAIOR obstáculo pra aprovação?',
+    helper: '💡 Escolha o que mais te trava. É nisso que o protocolo vai focar primeiro.',
+    options: [
+      {id:'3a', icon:'😰', text:'Ansiedade e bloqueio mental na prova', sub:'Estudo bem, mas travo no dia', value:'problema_emocional'},
+      {id:'3b', icon:'🗺️', text:'Não sei O QUE estudar (tem muita coisa)', sub:'Fico perdido(a) com tanto conteúdo', value:'problema_planejamento'},
+      {id:'3c', icon:'✍️', text:'Redação abaixo do que eu preciso', sub:'Perco muitos pontos na escrita', value:'problema_redacao'},
+      {id:'3d', icon:'⏱️', text:'Falta de tempo pra revisar tudo', sub:'Não consigo cobrir todas as matérias', value:'problema_tempo'},
+      {id:'3e', icon:'🎮', text:'Procrastinação e falta de consistência', sub:'Sei o que fazer, mas não faço', value:'problema_disciplina'}
+    ],
+    objection: '⚡ Todos esses pontos têm um jeito de trabalhar. Mas identificar qual é o SEU evita perder tempo com estratégia genérica.'
+  },
+  {
+    id: 'q4', category: 'historico_preparacao', progressPct: 57, progressLabel: 'PERGUNTA 4 DE 7',
+    question: 'Você já tentou cursinhos ou métodos de estudo antes?',
+    helper: '💡 Isso ajuda a personalizar o protocolo pra evitar repetir o que não funcionou.',
+    options: [
+      {id:'4a', icon:'😔', text:'Sim, mas larguei no meio', sub:'Comecei motivado(a), mas perdi o ritmo', value:'desistente'},
+      {id:'4b', icon:'📉', text:'Sim, mas não vi resultado', sub:'Estudei muito, mas a nota não subiu', value:'estagnado'},
+      {id:'4c', icon:'🎒', text:'Nunca fiz um método estruturado', sub:'Sempre estudei sozinho(a), sem direção', value:'autodidata'},
+      {id:'4d', icon:'📈', text:'Sim, e funcionou parcialmente', sub:'Vi evolução, mas não o suficiente', value:'evoluindo'}
+    ],
+    objection: '📊 Quem não teve resultado antes, na maioria das vezes, usava um método genérico — não um plano pensado pro próprio perfil. É isso que muda agora.'
+  },
+  {
+    id: 'q5', category: 'objetivo_pontuacao', progressPct: 71, progressLabel: 'PERGUNTA 5 DE 7',
+    question: 'Qual nota você PRECISA tirar no ENEM?',
+    helper: '💡 Baseie-se na nota de corte do curso que você quer. Seja realista e ambicioso(a).',
+    options: [
+      {id:'5a', icon:'🎯', text:'Entre 500 e 600 pontos', sub:'Cursos com nota de corte mais baixa/média', value:'meta_basica', course:'Ex.: Pedagogia, Letras, Serviço Social'},
+      {id:'5b', icon:'🏆', text:'Entre 600 e 700 pontos', sub:'Cursos competitivos em universidades públicas', value:'meta_intermediaria', course:'Ex.: Administração, Psicologia, Enfermagem'},
+      {id:'5c', icon:'🔥', text:'Entre 700 e 800 pontos', sub:'Cursos muito concorridos', value:'meta_avancada', course:'Ex.: Direito, Engenharias, Arquitetura'},
+      {id:'5d', icon:'👑', text:'Acima de 800 pontos', sub:'Cursos de altíssima concorrência', value:'meta_elite', course:'Ex.: Medicina, Odontologia, Eng. Aeronáutica'}
+    ],
+    objection: '🎓 A diferença entre uma faixa de nota e outra não é só talento. É prioridade e organização valendo tanto quanto conteúdo.'
+  },
+  {
+    id: 'q6', category: 'perfil_cognitivo', progressPct: 85, progressLabel: 'PERGUNTA 6 DE 7',
+    question: 'Como você aprende MELHOR?',
+    helper: '💡 Não existe certo ou errado. Vamos adaptar a linguagem do protocolo ao seu perfil.',
+    options: [
+      {id:'6a', icon:'📺', text:'Vendo explicações visuais', sub:'Preciso ver o passo a passo', value:'visual_auditivo'},
+      {id:'6b', icon:'✍️', text:'Fazendo exercícios e questões práticas', sub:'Aprendo errando e corrigindo', value:'cinestesico'},
+      {id:'6c', icon:'📚', text:'Lendo resumos e materiais escritos', sub:'Prefiro ler no meu ritmo', value:'leitura_escrita'},
+      {id:'6d', icon:'🎨', text:'Misturando tudo', sub:'Gosto de variar os formatos', value:'multimodal'}
+    ],
+    objection: '🧠 Você retém muito mais quando estuda do jeito que combina com o seu cérebro — em vez de forçar um método que não é o seu.'
+  },
+  {
+    id: 'q7', category: 'estado_emocional', progressPct: 100, progressLabel: 'ÚLTIMA PERGUNTA', lastQuestion: true,
+    question: 'Como você se sente em relação ao ENEM agora?',
+    helper: '💡 Seja honesto(a). Seu estado emocional muda o tipo de suporte que você precisa.',
+    options: [
+      {id:'7a', icon:'😎', text:'Confiante, só preciso de um plano', sub:'Sei que posso, só falta organização', value:'confiante'},
+      {id:'7b', icon:'😤', text:'Ansioso(a), mas determinado(a)', sub:'Tenho receio, mas vou até o fim', value:'ansioso_determinado'},
+      {id:'7c', icon:'😔', text:'Perdido(a), sem saber por onde começar', sub:'Sinto que o tempo já apertou demais', value:'perdido'},
+      {id:'7d', icon:'😰', text:'Desesperado(a), sinto que é agora ou nunca', sub:'Preciso muito ir bem esse ano', value:'desesperado'}
+    ],
+    objection: '⚠️ Não importa como você se sente agora. O que muda o jogo é ter um plano claro pros próximos dias.'
+  }
+];
+
+/* ---------- PERFIS (4) ----------
+   Segmentação: determinada pela Pergunta 3 (principal obstáculo),
+   critério mais direto e verificável a partir de uma resposta real
+   do próprio usuário — sem inferência especulativa sobre múltiplas
+   respostas combinadas. */
+function determinarPerfil(answers){
+  const obstaculo = answers.principal_desafio;
+  if (obstaculo === 'problema_emocional') return 'ansioso';
+  if (obstaculo === 'problema_redacao') return 'redator_mediocre';
+  if (obstaculo === 'problema_disciplina') return 'procrastinador';
+  return 'caotico'; // problema_planejamento ou problema_tempo
+}
+
+const PROFILES = {
+  caotico: {
+    erroFatal: 'FALTA DE PRIORIDADE CLARA',
+    color: '#FF3B30',
+    icon: '🌪️',
+    headline: 'Você é o(a) Estudante Caótico(a)',
+    subheadline: 'Seu erro fatal: estudar sem prioridade',
+    description: 'Você estuda, mas sem direção clara — assiste aula aleatória, faz questão solta, não sabe o que vale mais priorizar. Resultado: esforço alto, retorno abaixo do que deveria.',
+    stats: [
+      {num: () => diasAteProva(), lbl:'dias até sua prova'},
+      {num:'21', lbl:'dias no Protocolo Reta Final'},
+      {num:'3', lbl:'fases do método (diagnóstico → prioridade → reta final)'}
+    ],
+    diagnosis: [
+      {icon:'❌', title:'Você estuda o que ACHA importante', desc:'Não necessariamente o que mais recorre. Uma parte menor dos temas costuma aparecer com muito mais frequência que o resto — e é nisso que o protocolo foca primeiro.'},
+      {icon:'❌', title:'Você não tem prioridade real', desc:'Estuda o que dá vontade no dia, na ordem que aparece. Sem prioridade clara, seu tempo se dilui entre tudo igualmente.'},
+      {icon:'❌', title:'Você confunde "assistir aula" com "aprender"', desc:'Ver muita videoaula não fixa conteúdo sozinho — é a prática (questão, resumo ativo, simulado) que consolida.'}
+    ],
+    harshTruth: null,
+    solution: [
+      {title:'Cronograma Pronto Dia a Dia', desc:'Você abre o protocolo e sabe exatamente o foco do dia — sem perder tempo decidindo o que revisar.'},
+      {title:'Prioridade Real, Não Ordem Alfabética', desc:'Revisão organizada pelo que mais recorre em cada área, não pela ordem do livro didático.'},
+      {title:'Revisão Ativa, Não Releitura', desc:'Técnica de recall e Feynman simplificada (Dia 3) — você testa o que sabe, em vez de só reler o caderno.'},
+      {title:'Fórmula de Redação Nota 1000', desc:'Estrutura pronta + banco de repertório, já incluída no protocolo principal.'},
+      {title:'Kit Anti-Pânico', desc:'Técnicas rápidas de controle emocional, disponíveis a qualquer momento do protocolo.'}
+    ],
+    preview: [
+      {tag:'Semana 1 · Dia 2', title:'Mapa de Prioridades', desc:'Matriz Importância × Domínio: o que mais cai no ENEM e você ainda não sabe = prioridade máxima. O resto espera.'},
+      {tag:'Semana 1 · Dia 4', title:'Seu Cronograma Real', desc:'Como montar um cronograma que cabe na sua rotina de verdade — baseado no seu diagnóstico, não em modelo genérico de internet.'},
+      {tag:'Semana 3 · Dia 17', title:'Revisão Relâmpago', desc:'Cartão-resumo de 1 página por matéria, pra revisar em 10 minutos por área.'}
+    ],
+    faq: [
+      {q:'Já tentei outros métodos e não funcionou. Por que esse seria diferente?', a:'Porque a maioria dos métodos genéricos tenta te ensinar tudo de novo. Este é sobre prioridade — o que revisar primeiro com o tempo que você tem, não sobre reaprender o ano inteiro.'},
+      {q:'21 dias é tempo suficiente pra reverter minha situação?', a:'Você não vai aprender tudo em 21 dias — nenhum método sério promete isso. O protocolo foi pensado pra te ajudar a dominar o que mais importa e chegar mais organizado(a) no dia da prova.'},
+      {q:'Tenho pouco tempo por dia. Vai funcionar pra mim?', a:'O protocolo é pensado com 1 foco por dia, não um dia inteiro de estudo — cabe na rotina real de quem tem pouco tempo.'},
+      {q:'E se eu não conseguir acompanhar o ritmo?', a:'Sem problema — se perder um dia, continue no seguinte a partir de onde parou. O protocolo foi pensado pra ser flexível, não rígido.'},
+      {q:'Tem garantia?', a:'Sim — 30 dias de garantia incondicional. Se não for pra você, devolvemos 100% do valor, sem burocracia e sem precisar justificar.'}
+    ]
+  },
+  ansioso: {
+    erroFatal: 'FALTA DE CONTROLE EMOCIONAL NA HORA DA PROVA',
+    color: '#FFD60A',
+    icon: '😰',
+    headline: 'Você é o(a) Ansioso(a) Determinado(a)',
+    subheadline: 'Seu erro fatal: a ansiedade sabota o que você já sabe',
+    description: 'Você estuda, entende, domina o conteúdo... mas na hora da prova trava. Não é falta de conhecimento — é falta de controle emocional treinado.',
+    stats: [
+      {num: () => diasAteProva(), lbl:'dias até sua prova'},
+      {num:'21', lbl:'dias no Protocolo Reta Final'},
+      {num:'6', lbl:'técnicas no Kit Anti-Pânico'}
+    ],
+    diagnosis: [
+      {icon:'🧠', title:'Você não treinou pra pressão do dia da prova', desc:'Estudar em casa, no silêncio, é diferente de fazer a prova com milhões de outros candidatos competindo. Sem treino, o corpo reage com pânico.'},
+      {icon:'🧠', title:'Você associa a prova a um gatilho de ansiedade', desc:'Toda vez que pensa no ENEM, vem o aperto no peito. Isso pode ser trabalhado com técnica — não é definitivo.'},
+      {icon:'🧠', title:'Você não tem um protocolo de resgate quando trava', desc:'Quando dá branco, a reação natural é entrar em pânico ainda mais. Ter um passo a passo pronto pra esse momento muda o resultado.'}
+    ],
+    harshTruth: null,
+    solution: [
+      {title:'Simulado Cronometrado (Dia 15)', desc:'Treina sua cabeça pra pressão real antes do dia da prova, em condição parecida com a real.'},
+      {title:'Protocolo Anti-Pânico desde o Dia 1', desc:'Respiração, ancoragem e reformulação de pensamento catastrófico — trabalhado ao longo de todo o protocolo, não só no fim.'},
+      {title:'Kit SOS Dia da Prova', desc:'Protocolo "Deu Branco" em 6 passos + checklist físico e mental (order bump).'},
+      {title:'Cronograma que Cabe na Sua Rotina', desc:'Sem virar madrugada — 1 foco por dia, sustentável pra saúde mental também.'},
+      {title:'Mentoria Vic (opcional)', desc:'Suporte diário via WhatsApp nas semanas finais, se você quiser acompanhamento além do protocolo.'}
+    ],
+    preview: [
+      {tag:'Dia 6', title:'Protocolo Anti-Pânico — Início', desc:'Respiração 4-7-8 passo a passo, técnica de ancoragem mental, e por que a ansiedade nasce de pensamento catastrófico — e como interromper o ciclo.'},
+      {tag:'Dia 15', title:'Simulado Cronometrado', desc:'Simulação de dia de prova, tempo real, sem pausa — pra seu corpo se acostumar com a pressão antes do dia real.'},
+      {tag:'Order bump · Kit SOS', title:'Protocolo "Deu Branco"', desc:'6 passos pra resetar mentalmente se travar durante a prova.'}
+    ],
+    faq: [
+      {q:'Esse protocolo substitui terapia ou acompanhamento psicológico?', a:'Não. O Kit Anti-Pânico e o protocolo emocional são ferramentas pra ansiedade situacional de estudo e prova. Se a ansiedade for persistente e afetar seu sono, apetite ou rotina, o caminho certo é buscar apoio profissional.'},
+      {q:'Simulado cronometrado não vai me deixar mais ansioso(a)?', a:'No começo pode incomodar — é proposital. A ideia é treinar sua cabeça pra pressão ANTES do dia real, pra ela não ser novidade na hora que mais importa.'},
+      {q:'As técnicas realmente funcionam ou é só teoria?', a:'São técnicas práticas e específicas (respiração guiada, ancoragem, protocolo de reset) — feitas pra aplicar no momento, não só pra ler.'},
+      {q:'Já tentei "respirar fundo" antes e não adiantou. Isso é diferente?', a:'Respirar fundo sem técnica raramente ajuda de verdade. O protocolo usa passos específicos (ex.: 4-7-8), não só "se acalma".'},
+      {q:'Tem garantia?', a:'Sim — 30 dias de garantia incondicional. Se não for pra você, devolvemos 100% do valor, sem burocracia e sem precisar justificar.'}
+    ]
+  },
+  redator_mediocre: {
+    erroFatal: 'REDAÇÃO SEM TÉCNICA',
+    color: '#34C759',
+    icon: '✍️',
+    headline: 'Você é o(a) Redator(a) Mediano(a)',
+    subheadline: 'Seu erro fatal: você escreve bem, mas não escreve com técnica',
+    description: 'Sua redação tem começo, meio e fim, e argumentos razoáveis. Mas fica abaixo do que poderia — geralmente por não dominar a estrutura e o repertório que realmente pontuam.',
+    stats: [
+      {num: () => diasAteProva(), lbl:'dias até sua prova'},
+      {num:'22', lbl:'repertórios prontos no bônus de redação'},
+      {num:'5', lbl:'competências avaliadas no ENEM'}
+    ],
+    diagnosis: [
+      {icon:'❌', title:'Você usa repertório de senso comum', desc:'Repertório específico (dado, exemplo histórico, citação com contexto) pontua mais do que argumento genérico.'},
+      {icon:'❌', title:'Sua proposta de intervenção fica incompleta', desc:'A matriz do ENEM exige 5 elementos na proposta de intervenção. Faltar um só já reduz a nota da competência 5.'},
+      {icon:'❌', title:'Você escreve sem revisar com um checklist', desc:'Escrever uma vez e entregar direto deixa passar erro estrutural que um checklist de 5 minutos resolveria.'}
+    ],
+    harshTruth: null,
+    solution: [
+      {title:'As 5 Competências Explicadas Simples', desc:'Cada uma com exemplo de parágrafo pra você visualizar na prática (Dia 5 do protocolo).'},
+      {title:'Banco de 22 Repertórios Prontos', desc:'Fato real + como conectar ao tema + frase de exemplo usável, organizados por tema recorrente (bônus Fórmula Redação Nota 1000).'},
+      {title:'Estrutura da Proposta de Intervenção', desc:'Checklist dos 5 elementos obrigatórios, pra parar de perder ponto por proposta incompleta.'},
+      {title:'Conectivos por Função', desc:'Lista pronta organizada por função — adição, oposição, causa/consequência (Dia 13).'},
+      {title:'Exemplos de Reescrita Antes/Depois', desc:'Veja, na prática, como um parágrafo genérico vira um parágrafo com repertório e estrutura.'}
+    ],
+    preview: [
+      {tag:'Dia 5', title:'Estrutura Nota 1000', desc:'As 5 competências do ENEM explicadas em linguagem simples, com exemplo de parágrafo pra cada uma.'},
+      {tag:'Bônus · Fórmula Redação', title:'Banco de Repertório', desc:'22 repertórios prontos, organizados por tema recorrente (desigualdade, tecnologia, meio ambiente, saúde mental, educação).'},
+      {tag:'Dia 13', title:'Conectivos e Coesão', desc:'Lista pronta de conectivos por função, pra parar de repetir "além disso" a redação toda.'}
+    ],
+    faq: [
+      {q:'Minha redação já tem uma nota razoável. Ainda vale a pena?', a:'Vale — o banco de repertório e a estrutura da proposta de intervenção ajudam a fechar os pontos que faltam pra chegar mais perto da nota máxima, não só pra quem está começando do zero.'},
+      {q:'Preciso saber escrever bem pra usar isso?', a:'Não. A fórmula dá a estrutura pronta — você não precisa "ter talento pra escrever", precisa seguir o modelo passo a passo.'},
+      {q:'É só teoria ou tem exemplo prático?', a:'Tem exemplo de reescrita (antes/depois) mostrando como aplicar o repertório e a estrutura na prática, parágrafo por parágrafo.'},
+      {q:'Funciona pra outros vestibulares, não só ENEM?', a:'A estrutura de redação dissertativo-argumentativa e o banco de repertório valem pra qualquer vestibular que peça esse formato.'},
+      {q:'Tem garantia?', a:'Sim — 30 dias de garantia incondicional. Se não for pra você, devolvemos 100% do valor, sem burocracia e sem precisar justificar.'}
+    ]
+  },
+  procrastinador: {
+    erroFatal: 'AUSÊNCIA DE ESTRUTURA EXTERNA',
+    color: '#AF52DE',
+    icon: '🎮',
+    headline: 'Você é o(a) Procrastinador(a) Crônico(a)',
+    subheadline: 'Seu erro fatal: você sabe o que fazer, mas não faz',
+    description: 'Você tem o material, sabe o que precisa estudar, promete todo dia que vai começar — e sempre arruma uma desculpa. Isso não é falta de caráter: é o cérebro escolhendo recompensa imediata em vez de recompensa distante.',
+    stats: [
+      {num: () => diasAteProva(), lbl:'dias até sua prova'},
+      {num:'21', lbl:'check-ins possíveis no checklist'},
+      {num:'1', lbl:'foco por dia — sem decisão extra'}
+    ],
+    diagnosis: [
+      {icon:'🧠', title:'Seu cérebro prefere recompensa imediata', desc:'Rede social dá dopamina agora. Estudar dá resultado em semanas. O cérebro tende a escolher o que é imediato — isso é comportamento humano comum, não falha pessoal.'},
+      {icon:'🧠', title:'Você não tem sistema de responsabilização', desc:'Ninguém cobra, não tem consequência imediata — então fica fácil empurrar pra amanhã.'},
+      {icon:'🧠', title:'Você não vê progresso tangível', desc:'Estudar sem visualizar avanço é desmotivante. Sem métrica visível, fica difícil saber se está evoluindo.'}
+    ],
+    harshTruth: 'A procrastinação raramente é preguiça — na maioria das vezes é o cérebro escolhendo a recompensa imediata (rede social, série) em vez da recompensa distante (a prova em novembro). Isso não é falha de caráter, é como o cérebro humano costuma funcionar. A parte boa: dá pra trabalhar isso com estrutura — check-in diário, progresso visível, e 1 foco por vez.',
+    solution: [
+      {title:'1 Foco por Dia', desc:'O protocolo decide a prioridade do dia — você só executa. Menos decisão, menos brecha pra procrastinar.'},
+      {title:'Checklist com Progresso Salvo', desc:'Marca o que já fez, vê a barra de progresso subir — reforço visual real, não abstrato.'},
+      {title:'Mentoria Vic — Check-in Diário (opcional)', desc:'Alguém pergunta se você cumpriu o dia de hoje. Comemora se sim, te puxa de volta sem julgar se não.'},
+      {title:'Protocolo Curto, Não Maratona', desc:'21 dias com foco definido — não mais um material de "estude o ano inteiro de novo".'},
+      {title:'Kit Anti-Pânico', desc:'Pra quando a procrastinação vem disfarçada de ansiedade de última hora.'}
+    ],
+    preview: [
+      {tag:'Bônus · Checklist Interativo', title:'Progresso Salvo Automaticamente', desc:'Marca o que já fez, guarda o histórico. Ver a barra subindo é reforço emocional real ao longo do protocolo.'},
+      {tag:'Upsell · Mentoria Vic', title:'Check-in Diário via WhatsApp', desc:'A Vic pergunta todo dia se você completou o dia do protocolo — comemora se sim, acolhe sem julgar e te puxa de volta se não (opcional).'},
+      {tag:'Todo o protocolo', title:'1 Foco por Dia', desc:'Nada de decidir "o que estudar hoje" — o protocolo já decide por você.'}
+    ],
+    faq: [
+      {q:'Já tentei várias vezes ser consistente e nunca dei conta. Por que agora seria diferente?', a:'Porque a maioria das tentativas falha por falta de estrutura externa, não de força de vontade. O checklist com progresso salvo e o check-in diário da Vic (opcional) dão isso pra você.'},
+      {q:'Isso é só mais um cronograma que eu vou abandonar?', a:'O foco não é "ter mais disciplina" — é reduzir decisão. Você não escolhe o que estudar, o protocolo já decide. Menos decisão, menos brecha pra procrastinar.'},
+      {q:'E se eu procrastinar mesmo assim?', a:'Vai acontecer em algum dia — é normal. O protocolo é feito pra você voltar no dia seguinte, não pra exigir perfeição.'},
+      {q:'A mentoria Vic é obrigatória?', a:'Não, é um upsell opcional no checkout. O protocolo funciona sozinho — a Vic é reforço extra pra quem quer responsabilização diária.'},
+      {q:'Tem garantia?', a:'Sim — 30 dias de garantia incondicional. Se não for pra você, devolvemos 100% do valor, sem burocracia e sem precisar justificar.'}
+    ]
+  }
+};
+
+/* ---------- ESTADO ---------- */
+const state = { idx: 0, answers: {}, profile: null };
+let hesitationTimer = null;
+
+const screenEl = document.getElementById('screen');
+const progressWrap = document.getElementById('progressWrap');
+const progressFill = document.getElementById('progressFill');
+const progressLabel = document.getElementById('progressLabel');
+const objectionBanner = document.getElementById('objectionBanner');
+
+function setScreen(html){
+  screenEl.classList.remove('screen');
+  void screenEl.offsetWidth; // reinicia a animação fade+slide-up
+  screenEl.innerHTML = html;
+  screenEl.classList.add('screen');
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+  hideObjection();
+}
+
+function clearHesitationTimer(){
+  if (hesitationTimer) { clearTimeout(hesitationTimer); hesitationTimer = null; }
+}
+function armHesitationTimer(text){
+  clearHesitationTimer();
+  hesitationTimer = setTimeout(() => showObjection(text), 10000);
+}
+function showObjection(text){
+  objectionBanner.textContent = text;
+  objectionBanner.hidden = false;
+}
+function hideObjection(){
+  objectionBanner.hidden = true;
+}
+
+/* ---------- INTRO ---------- */
+function renderIntro(){
+  progressWrap.classList.remove('show');
+  const dias = diasAteProva();
+  setScreen(`
+    <div class="card">
+      <div class="intro-icon">⚠️</div>
+      <h1 class="intro-headline">DIAGNÓSTICO DE APROVAÇÃO</h1>
+      <div class="intro-sub">Protocolo Reta Final — 21 Dias Decisivos</div>
+      <p class="intro-desc">7 perguntas estratégicas pra revelar seu maior obstáculo na reta final e qual protocolo específico ataca isso primeiro.</p>
+      <div class="stats-bar">
+        <div class="stat-item"><div class="stat-number">5.055.818</div><div class="stat-label">inscritos no ENEM 2026</div></div>
+        <div class="stat-item"><div class="stat-number">21</div><div class="stat-label">dias no protocolo</div></div>
+        <div class="stat-item"><div class="stat-number">${dias}</div><div class="stat-label">dias até sua prova</div></div>
+      </div>
+      <button class="btn btn-wide btn-glow" onclick="startQuiz()">INICIAR DIAGNÓSTICO →</button>
+      <p class="disclaimer">⏱️ Tempo estimado: 90 segundos · Sem cadastro necessário pra começar</p>
+    </div>
+  `);
+}
+function startQuiz(){
+  state.idx = 0;
+  renderQuestion(0);
+}
+
+/* ---------- PERGUNTAS ---------- */
+function renderQuestion(i){
+  const q = QUESTIONS[i];
+  progressWrap.classList.add('show');
+  progressFill.style.width = q.progressPct + '%';
+  progressLabel.textContent = q.progressLabel;
+
+  const optionsHtml = q.options.map(opt => `
+    <div class="q-option" onclick="answerQuestion('${q.category}','${opt.value}')">
+      <span class="icon">${opt.icon}</span>
+      <div class="body">
+        <div class="opt-text">${opt.text}</div>
+        <div class="opt-sub">${opt.sub}</div>
+        ${opt.tag ? `<span class="q-tag" style="background:${opt.tagColor}">${opt.tag}</span>` : ''}
+        ${opt.course ? `<div class="q-course">${opt.course}</div>` : ''}
+      </div>
+    </div>
+  `).join('');
+
+  setScreen(`
+    <div class="card">
+      <div class="q-pretext ${q.lastQuestion ? 'last' : ''}">${q.progressLabel}</div>
+      <h2 class="q-title">${q.question}</h2>
+      <div class="q-helper">${q.helper}</div>
+      <div class="q-options">${optionsHtml}</div>
+    </div>
+  `);
+  armHesitationTimer(q.objection);
+}
+
+function answerQuestion(category, value){
+  clearHesitationTimer();
+  state.answers[category] = value;
+  if (state.idx < QUESTIONS.length - 1){
+    state.idx++;
+    renderQuestion(state.idx);
+  } else {
+    renderLead();
+  }
+}
+
+/* ---------- CAPTURA DE LEAD (obrigatória antes do resultado) ---------- */
+function renderLead(){
+  progressWrap.classList.remove('show');
+  const dias = diasAteProva();
+  setScreen(`
+    <div class="card">
+      <div class="lead-icon">🔒</div>
+      <h2 class="lead-headline">Último passo: proteja seu diagnóstico</h2>
+      <p class="lead-sub">Vamos liberar seu resultado completo + protocolo personalizado.</p>
+      <div class="lead-urgency">⚠️ Faltam ${dias} dias até sua prova — quanto antes você tiver seu protocolo, mais tempo pra aplicar.</div>
+      <form id="leadForm" onsubmit="submitLead(event)">
+        <div class="lead-field">
+          <label>👤 Nome completo</label>
+          <input type="text" name="nome" required minlength="2" placeholder="Seu nome completo">
+        </div>
+        <div class="lead-field">
+          <label>📧 Melhor e-mail</label>
+          <input type="email" name="email" required placeholder="seuemail@exemplo.com">
+        </div>
+        <div class="lead-field">
+          <label>📱 WhatsApp</label>
+          <input type="tel" name="whatsapp" required placeholder="(00) 00000-0000">
+          <div class="field-helper">Pra suporte via WhatsApp — sem spam.</div>
+        </div>
+        <button type="submit" class="btn btn-wide">LIBERAR MEU DIAGNÓSTICO AGORA →</button>
+      </form>
+      <p class="lead-privacy">🔐 Seus dados são usados só pra te enviar o diagnóstico e suporte — conforme a LGPD (Lei 13.709/2018). Não compartilhamos com terceiros.</p>
+    </div>
+  `);
+}
+
+function submitLead(evt){
+  evt.preventDefault();
+  const form = evt.target;
+  const dados = {
+    nome: form.nome.value,
+    email: form.email.value,
+    whatsapp: form.whatsapp.value,
+    respostas: state.answers
+  };
+  if (LEAD_WEBHOOK_URL && !LEAD_WEBHOOK_URL.includes('COLE_AQUI')){
+    fetch(LEAD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Accept':'application/json'},
+      body: JSON.stringify(dados)
+    }).catch(() => { /* falha de rede não deve travar a experiência do estudante */ });
+  }
+  renderProcessing();
+}
+
+/* ---------- PROCESSAMENTO ---------- */
+function renderProcessing(){
+  setScreen(`
+    <div class="card processing-wrap">
+      <div class="loader-ring"></div>
+      <div class="proc-steps">
+        <div class="proc-step" style="animation-delay:0s">✓ Analisando seu perfil de estudo...</div>
+        <div class="proc-step" style="animation-delay:2s">✓ Identificando seu principal obstáculo...</div>
+        <div class="proc-step" style="animation-delay:4s">✓ Cruzando com o Protocolo Reta Final...</div>
+        <div class="proc-step" style="animation-delay:6s">✓ Montando seu diagnóstico personalizado...</div>
+      </div>
+      <div class="proc-urgency">⚠️ Cada dia sem prioridade clara é um dia a menos de reta final aproveitado.</div>
+    </div>
+  `);
+  setTimeout(() => {
+    state.profile = determinarPerfil(state.answers);
+    renderResult();
+  }, 8000);
+}
+
+/* ---------- RESULTADO ---------- */
+function renderResult(){
+  progressWrap.classList.remove('show');
+  const p = PROFILES[state.profile];
+  document.documentElement.style.setProperty('--profile', p.color);
+  const dias = diasAteProva();
+
+  const statsHtml = p.stats.map(s => `
+    <div class="stat-big"><div class="num">${typeof s.num === 'function' ? s.num() : s.num}</div><div class="lbl">${s.lbl}</div></div>
+  `).join('');
+
+  const diagnosisHtml = p.diagnosis.map(d => `
+    <div class="reason-card"><span class="icon">${d.icon}</span><h4>${d.title}</h4><p>${d.desc}</p></div>
+  `).join('');
+
+  const harshHtml = p.harshTruth ? `<div class="harsh-box">${p.harshTruth}</div>` : '';
+
+  const solutionHtml = p.solution.map(s => `
+    <div class="solution-item"><span class="icon">✅</span><div><h5>${s.title}</h5><p>${s.desc}</p></div></div>
+  `).join('');
+
+  const previewHtml = p.preview.map(c => `
+    <div class="preview-card"><div class="tag">${c.tag}</div><h5>${c.title}</h5><p>${c.desc}</p></div>
+  `).join('');
+
+  const faqHtml = p.faq.map(f => `
+    <details class="faq-item"><summary>${f.q}</summary><p>${f.a}</p></details>
+  `).join('');
+
+  setScreen(`
+    <div class="card">
+      <div style="text-align:center;">
+        <span class="result-badge">SEU DIAGNÓSTICO · ${p.erroFatal}</span>
+        <div class="result-icon">${p.icon}</div>
+        <h1 class="result-headline">${p.headline}</h1>
+        <div class="result-sub">${p.subheadline}</div>
+        <p class="result-desc" style="margin-left:auto;margin-right:auto;">${p.description}</p>
+      </div>
+
+      <div class="stats-grid">${statsHtml}</div>
+
+      <div class="section-title">Por que você está nessa situação</div>
+      ${diagnosisHtml}
+
+      ${harshHtml}
+
+      <div class="solution-box">
+        <div class="section-title" style="margin-bottom:16px;">O que o Protocolo Reta Final faz por você</div>
+        ${solutionHtml}
+      </div>
+
+      <div class="urgency-box">
+        <div class="icon">⚠️</div>
+        <h4>Sua prova é em 08 e 15/11/2026</h4>
+        <p>A data não muda — o que muda é se você chega nela com prioridade clara ou tentando revisar tudo de novo na última semana.</p>
+        <div class="countdown">${dias}</div>
+        <div class="countdown-label">dias até sua prova</div>
+      </div>
+
+      <div class="cta-block">
+        <h4>ATIVAR MEU PROTOCOLO PERSONALIZADO</h4>
+        <p>Acesso imediato + Cronograma pronto + Bônus inclusos</p>
+        <button class="btn" onclick="goToCheckout()">QUERO O PROTOCOLO RETA FINAL AGORA →</button>
+        <div class="cta-price">${PRECO_REAL}</div>
+        <div class="cta-guarantee">🛡️ Garantia incondicional de 30 dias — risco zero</div>
+      </div>
+
+      <div class="section-title">Uma prévia real do que você recebe</div>
+      <div class="preview-grid">${previewHtml}</div>
+
+      <div class="section-title">Dúvidas de quem está na sua situação</div>
+      ${faqHtml}
+
+      <div class="section-title">Antes de decidir, assista isso</div>
+      <div class="vsl-wrap" id="vslWrap">
+        <div class="vsl-progress"><div class="vsl-progress-fill" id="vslProgressFill"></div></div>
+        <button class="vsl-skip" id="vslSkipBtn" onclick="skipVsl()">Pular →</button>
+        <div id="vslBeat" class="vsl-beat"></div>
+        <div id="vslFinal" class="vsl-final">
+          <p style="font:500 17px 'Inter';color:var(--text-secondary);margin-bottom:20px;">Nas próximas semanas você decide: continuar sem prioridade clara, ou ativar o protocolo agora.</p>
+          <button class="btn btn-wide" style="max-width:420px;" onclick="goToCheckout()">IR PRO MEU PROTOCOLO →</button>
+          <div class="cta-price" style="margin-top:14px;">${PRECO_REAL}</div>
+          <div class="cta-guarantee">🛡️ Garantia incondicional de 30 dias — risco zero</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sticky-cta">
+      <div class="sticky-cta-inner">
+        <div class="price">${PRECO_REAL} · 🛡️ garantia de 30 dias</div>
+        <button class="btn" onclick="goToCheckout()">ATIVAR PROTOCOLO →</button>
+      </div>
+    </div>
+  `);
+  vslPlayed = false;
+  setupVslObserver();
+}
+
+/* ---------- VSL CINÉTICA DE FECHAMENTO (120s, roteiro do usuário) ----------
+   Beats com timing (ms). O 1º e o 15º usam dado real calculado na hora
+   (contagem regressiva real e o erro fatal do PRÓPRIO perfil do usuário),
+   nunca número fixo. Ver outputs/gabriel/desafio-reta-final-vsl/ pro
+   roteiro completo formatado pra produção de vídeo real com b-roll. */
+function vslBeats(){
+  return [
+    {text:() => `Faltam ${diasAteProva()} dias pro ENEM.`, cls:'red', dur:3200},
+    {text:'Você tem um plano... ou só esperança?', cls:'', dur:3000},
+    {text:'Porque esperança não aprova ninguém.', cls:'red', dur:2800},
+    {text:'Você já percebeu que não dá tempo de revisar tudo?', cls:'small', dur:2600},
+    {text:'Que decorar fórmula na véspera não funciona?', cls:'small', dur:2600},
+    {text:'Que entrar na prova sem estratégia é apostar tudo na sorte?', cls:'small', dur:3000},
+    {text:'5.055.818 pessoas fazem o ENEM em 2026.', cls:'yellow', dur:2800},
+    {text:'A maioria não sabe por onde começar — não por falta de esforço. Por falta de prioridade clara.', cls:'small', dur:3400},
+    {text:'Os aprovados não estudam mais.', cls:'', dur:2200},
+    {text:'Eles estudam CERTO.', cls:'red', dur:2200},
+    {text:'Não decoram tudo — dominam o que REALMENTE cai.', cls:'small', dur:3000},
+    {text:'Não entram em pânico — treinaram o cérebro pra performar sob pressão.', cls:'small', dur:3200},
+    {text:'E tudo isso em 21 dias.', cls:'yellow', dur:2400},
+    {text:'Não por mágica. Por método.', cls:'red', dur:2600},
+    {text:() => `Seu diagnóstico já mostrou: ${PROFILES[state.profile].erroFatal.toLowerCase()}.`, cls:'small', dur:3400},
+    {text:'Agora falta um passo.', cls:'', dur:2200}
+  ];
+}
+
+let vslTimer = null;
+let vslObserver = null;
+let vslPlayed = false;
+
+function setupVslObserver(){
+  const wrap = document.getElementById('vslWrap');
+  if (!wrap) return;
+  vslObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !vslPlayed){
+        vslPlayed = true;
+        playVslBeat(0);
+        vslObserver.disconnect();
+      }
+    });
+  }, {threshold: 0.5});
+  vslObserver.observe(wrap);
+}
+
+function playVslBeat(i){
+  const beats = vslBeats();
+  const beatEl = document.getElementById('vslBeat');
+  const fillEl = document.getElementById('vslProgressFill');
+  if (!beatEl || i >= beats.length){ revealVslFinal(); return; }
+
+  const beat = beats[i];
+  const text = typeof beat.text === 'function' ? beat.text() : beat.text;
+  beatEl.className = 'vsl-beat' + (beat.cls ? ' ' + beat.cls : '');
+  beatEl.textContent = text;
+  if (fillEl) fillEl.style.width = Math.round(((i + 1) / beats.length) * 100) + '%';
+
+  requestAnimationFrame(() => beatEl.classList.add('show'));
+
+  vslTimer = setTimeout(() => {
+    beatEl.classList.remove('show');
+    setTimeout(() => playVslBeat(i + 1), 300);
+  }, beat.dur);
+}
+
+function revealVslFinal(){
+  const beatEl = document.getElementById('vslBeat');
+  const finalEl = document.getElementById('vslFinal');
+  const skipBtn = document.getElementById('vslSkipBtn');
+  if (beatEl) beatEl.style.display = 'none';
+  if (skipBtn) skipBtn.style.display = 'none';
+  if (finalEl) finalEl.classList.add('show');
+}
+
+function skipVsl(){
+  clearTimeout(vslTimer);
+  if (vslObserver) vslObserver.disconnect();
+  vslPlayed = true;
+  revealVslFinal();
+}
+
+function goToCheckout(){
+  if (TICTO_CHECKOUT_URL && !TICTO_CHECKOUT_URL.includes('COLE_AQUI')){
+    window.location.href = TICTO_CHECKOUT_URL;
+  } else {
+    alert('Aqui entra o link real do checkout da Ticto — trocar TICTO_CHECKOUT_URL no topo do <script>.');
+  }
+}
+
+/* ---------- START ---------- */
+renderIntro();
+</script>
+</body>
+</html>
